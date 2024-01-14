@@ -6,6 +6,7 @@ import { useIsMounted } from 'usehooks-ts'
 import Slider from 'react-slick'
 import useStyles from './Home.style'
 import { Box } from '@mui/material'
+import AppBanner from '@/components/AppBanner'
 
 const TAB_TITLES = ['News', 'Promotion']
 
@@ -41,7 +42,18 @@ export default function Home() {
         color: 'black',
       }}
     >
-      {t('HOME_PAGE')}
+      <AppBanner />
+      <Box
+        sx={{
+          height: '150vh',
+          width: '100vw',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}
+      >
+        Coming soon
+      </Box>
     </Box>
   )
 }
