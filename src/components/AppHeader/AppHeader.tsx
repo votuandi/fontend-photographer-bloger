@@ -54,14 +54,20 @@ const AppHeader = (props: IProps, ref: React.ForwardedRef<any>) => {
     }
   }
 
+  const handleClickMobileSubMenuItem = (path: string) => {
+    gotoPage(path)
+    setIsShowMobileMenu(false)
+    setShowMobileSubMenu([...Array(MENU.length).fill(false)])
+  }
+
   const handleClickMenuItem = (item: MENU_ITEM_TYPE) => {
     if (item.subMenu && item.subMenu?.length > 0) return
     gotoPage(item.path)
   }
 
   useEffect(() => {
-    setShowSubMenu(Array(MENU.length).fill(false))
-    setShowMobileSubMenu(Array(MENU.length).fill(false))
+    setShowSubMenu([...Array(MENU.length).fill(false)])
+    setShowMobileSubMenu([...Array(MENU.length).fill(false)])
 
     // Add event listener when the component mounts
     window.addEventListener('scroll', handleScroll)
@@ -183,6 +189,7 @@ const AppHeader = (props: IProps, ref: React.ForwardedRef<any>) => {
                             letterSpacing: '.3em',
                             cursor: 'pointer',
                           }}
+                          onClick={() => handleClickMobileSubMenuItem(item.path)}
                         >
                           {subItem.title}
                         </Button>
@@ -260,6 +267,7 @@ const AppHeader = (props: IProps, ref: React.ForwardedRef<any>) => {
                               fontWeight: 700,
                             },
                           }}
+                          onClick={() => gotoPage(subItem.path)}
                         >
                           {subItem.title}
                         </Box>
