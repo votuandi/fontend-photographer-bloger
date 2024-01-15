@@ -2,6 +2,9 @@ import { makeStyles } from 'tss-react/mui'
 
 type IStyleParams = {
   isUnderBanner: boolean
+  isUnderMobile: boolean
+  isShowMobileMenu: boolean
+  isHomePage: boolean
 }
 
 const useStyles = makeStyles<{ params: IStyleParams }>({
@@ -16,12 +19,44 @@ const useStyles = makeStyles<{ params: IStyleParams }>({
       justifyContent: 'space-between',
       alignItems: 'center',
       padding: '20px',
-      backgroundColor: params.isUnderBanner ? '#fff' : 'transparent',
-      boxShadow: params.isUnderBanner ? 'rgba(0, 0, 0, 0.1) 0px 4px 12px' : 'none',
+      backgroundColor: !params.isHomePage ? '#fff' : params.isUnderBanner ? '#fff' : 'transparent',
+      boxShadow: !params.isHomePage ? 'rgba(0, 0, 0, 0.1) 0px 4px 12px' : params.isUnderBanner ? 'rgba(0, 0, 0, 0.1) 0px 4px 12px' : 'none',
       position: 'fixed',
       top: 0,
       left: 0,
       zIndex: 100,
+    },
+
+    rootMobile: {
+      width: '100vw',
+      display: 'flex',
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      padding: '20px',
+      backgroundColor: !params.isHomePage ? '#fff' : params.isShowMobileMenu ? '#fff' : params.isUnderMobile ? '#fff' : 'transparent',
+      boxShadow: !params.isHomePage
+        ? 'rgba(0, 0, 0, 0.1) 0px 4px 12px'
+        : params.isShowMobileMenu
+        ? 'rgba(0, 0, 0, 0.1) 0px 4px 12px'
+        : params.isUnderMobile
+        ? 'rgba(0, 0, 0, 0.1) 0px 4px 12px'
+        : 'none',
+      position: 'fixed',
+      top: 0,
+      left: 0,
+      zIndex: 100,
+    },
+
+    mobileMenuContainer: {
+      position: 'fixed',
+      top: params.isShowMobileMenu ? 0 : '-100vh',
+      left: 0,
+      width: '100vw',
+      height: '100vh',
+      zIndex: 99,
+      backgroundColor: 'rgb(256,256,256,0.9)',
+      animation: params.isShowMobileMenu ? 'slideInDown 0.5s ease-in-out' : 'slideOutUp 0.5s ease-in-out',
     },
 
     menu: {
@@ -49,7 +84,7 @@ const useStyles = makeStyles<{ params: IStyleParams }>({
             display: 'block',
             height: '0',
             width: '100%',
-            borderBottom: '1px solid #fff',
+            borderBottom: `1px solid ${!params.isHomePage ? '#020000' : params.isUnderBanner ? '#020000' : '#fff'}`,
             animationName: '$slideInLeft',
             animationDuration: '1s',
             animationFillMode: 'both',
@@ -70,7 +105,7 @@ const useStyles = makeStyles<{ params: IStyleParams }>({
     menuText: {
       fontFamily: 'Mulish',
       fontSize: 11,
-      color: params.isUnderBanner ? '#020000' : '#fff',
+      color: !params.isHomePage ? '#020000' : params.isUnderBanner ? '#020000' : '#fff',
       fontWeight: 500,
       textTransform: 'uppercase',
       lineHeight: '23px',

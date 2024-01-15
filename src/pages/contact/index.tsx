@@ -6,6 +6,7 @@ import LayoutMain from '@/layouts/Main'
 
 import type { NextPageWithLayout } from '@/pages/_app'
 import type { GetServerSideProps, GetStaticProps, InferGetServerSidePropsType } from 'next'
+// import pageStructuresApi from "@/utils/api/pageStructures/pageStructures.api";
 import { NextSeo } from 'next-seo'
 
 type ISeoProps = {
@@ -15,8 +16,8 @@ type ISeoProps = {
 
 export const getServerSideProps = (async ({ locale }) => {
   let seoData: ISeoProps = {
-    title: 'Home Page',
-    description: '𝗧𝗿𝗮𝘃𝗲𝗹 𝗕𝗹𝗼𝗴𝗴𝗲𝗿 . 𝗖𝗼𝗻𝘁𝗲𝗻𝘁 𝗖𝗿𝗲𝗮𝘁𝗼𝗿 . Contact: kyanhnguyen.traveller@gmail.com',
+    title: 'Contact',
+    description: 'Liên hệ với Kỳ Anh Nguyễn',
   }
   return {
     props: { seoData, ...(await serverSideTranslations(locale || '')) },
@@ -25,22 +26,22 @@ export const getServerSideProps = (async ({ locale }) => {
   seoData: ISeoProps
 }>
 
-const ViewHome = dynamic(() => import('@/views/Home'), {
+const ViewContact = dynamic(() => import('@/views/Contact'), {
   suspense: true,
   ssr: false,
 })
 
-const Home: NextPageWithLayout<InferGetServerSidePropsType<typeof getServerSideProps>> = (props) => {
+const Contact: NextPageWithLayout<InferGetServerSidePropsType<typeof getServerSideProps>> = (props) => {
   return (
     <Suspense fallback="...">
       <NextSeo title={props.seoData.title} description={props.seoData.description} />
-      <ViewHome />
+      <ViewContact />
     </Suspense>
   )
 }
 
-Home.getLayout = (page) => {
+Contact.getLayout = (page) => {
   return <LayoutMain>{page}</LayoutMain>
 }
 
-export default Home
+export default Contact
