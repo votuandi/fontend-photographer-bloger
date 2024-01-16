@@ -189,7 +189,7 @@ const AppHeader = (props: IProps, ref: React.ForwardedRef<any>) => {
                             letterSpacing: '.3em',
                             cursor: 'pointer',
                           }}
-                          onClick={() => handleClickMobileSubMenuItem(item.path)}
+                          onClick={() => handleClickMobileSubMenuItem(subItem.path)}
                         >
                           {subItem.title}
                         </Button>

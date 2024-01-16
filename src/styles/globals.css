@@ -174,3 +174,30 @@ a {
     background-color: #a0a0a0; /* Change color on hover */
   }
 }
+
+.text-1-line {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 1; /* number of lines to show */
+  line-clamp: 1;
+  -webkit-box-orient: vertical;
+  /* word-break: break-all; */
+}
+
+.text-2-line {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2; /* number of lines to show */
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  /* word-break: break-all; */
+}
+
+.text-3-line {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 3; /* number of lines to show */
+  line-clamp: 3;
+  -webkit-box-orient: vertical;
+  /* word-break: break-all; */
+}
