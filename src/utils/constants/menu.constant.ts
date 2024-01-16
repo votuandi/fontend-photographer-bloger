@@ -6,6 +6,10 @@ export type MENU_ITEM_TYPE = {
 
 export const MENU: MENU_ITEM_TYPE[] = [
   {
+    title: 'Home',
+    path: '/',
+  },
+  {
     title: 'About me',
     path: '/about-me',
   },
