@@ -85,84 +85,22 @@ export const MENU: MENU_ITEM_TYPE[] = [
   },
 ]
 
-export const LEFT_MENU_ALL_SERVICE = [
-  {
-    image: '/img/ic-car-leaning.png',
-    title: 'Car cleaning',
-  },
-  {
-    image: '/img/ic-home-cleaning.png',
-    title: 'Home cleaning',
-  },
-  {
-    image: '/img/ic-commerce-cleaning.png',
-    title: 'Commerce cleaning',
-  },
-  {
-    image: '/img/ic-coupon.png',
-    title: 'Coupon',
-  },
-  {
-    image: '/img/ic-gift-card.png',
-    title: 'Gift card',
-  },
-]
+export type ADMIN_MENU_TYPE = {
+  title: string
+  path: string
+}
 
-export const LEFT_MENU_ONLINE_SHOP = [
+export const ADMIN_MENU = [
   {
-    image: '/img/ic-coupon.png',
-    title: 'Coupon',
-    path: '/coupon',
+    title: 'Banner',
+    path: '/banner',
   },
   {
-    image: '/img/ic-services.png',
-    title: 'Services',
-    path: '/service',
-  },
-]
-
-export const FOOTER = [
-  {
-    title: 'SERVICE',
-    items: [
-      {
-        name: 'Car Cleaning',
-        path: '',
-      },
-      {
-        name: 'Commerce Cleaning',
-        path: '',
-      },
-      {
-        name: 'Home Cleaning',
-        path: '',
-      },
-    ],
+    title: 'Category',
+    path: '/category',
   },
   {
-    title: 'COMPANY',
-    items: [
-      {
-        name: 'News',
-        path: '',
-      },
-      {
-        name: 'Member center',
-        path: '',
-      },
-    ],
-  },
-  {
-    title: 'LEGAL',
-    items: [
-      {
-        name: 'Terms & Conditions',
-        path: '',
-      },
-      {
-        name: 'Privacy Policy',
-        path: '',
-      },
-    ],
+    title: 'Article',
+    path: '/article',
   },
 ]

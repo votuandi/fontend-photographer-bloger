@@ -1,27 +1,24 @@
-import axios from "axios";
+import axios from 'axios'
 
 // import { commonConfig } from "@/utils/config";
 
 const commonAxios = axios.create({
   // baseURL: commonConfig.API_BASE_URL,
-});
+})
 
 commonAxios.interceptors.request.use(
   (req) => {
-    if (!req.headers["x-lang"]) {
-      req.headers["x-lang"] =
-        typeof window !== "undefined"
-          ? window.NextPublic.lang.toLowerCase()
-          : undefined;
+    if (!req.headers['x-lang']) {
+      req.headers['x-lang'] = typeof window !== 'undefined' ? window.NextPublic.lang.toLowerCase() : undefined
     }
 
     switch ((req.method as string).toUpperCase()) {
-      case "GET": {
-        req.params = req.params || {};
+      case 'GET': {
+        req.params = req.params || {}
         // Object.assign(req.params, {});
-        break;
+        break
       }
-      case "POST": {
+      case 'POST': {
         // if (!(req.data instanceof FormData) && !!req.data) {
         //   req.data = commonHelpers.formatFormData(req.data);
         // }
@@ -31,9 +28,9 @@ commonAxios.interceptors.request.use(
         //   req.data = req.data || {};
         //   // Object.assign(req.params, {});
         // }
-        break;
+        break
       }
-      case "PUT": {
+      case 'PUT': {
         // if (!(req.data instanceof FormData) && !!req.data) {
         //   req.data = commonHelpers.formatFormData(req.data);
         // }
@@ -43,16 +40,16 @@ commonAxios.interceptors.request.use(
         //   req.data = req.data || {};
         //   // Object.assign(req.params, {});
         // }
-        break;
+        break
       }
     }
-    return req;
+    return req
   },
   (err) => {
-    console.log(err);
-    return Promise.reject(err);
+    console.log(err)
+    return Promise.reject(err)
   }
-);
+)
 
 commonAxios.interceptors.response.use(
   (res) => {
@@ -60,12 +57,12 @@ commonAxios.interceptors.response.use(
     // 	// helpers.axios.allocateRoute(res.data.error_code)
     // }
 
-    return res;
+    return res
   },
   (err) => {
-    console.log(err);
-    return Promise.reject(err);
+    console.log(err)
+    return Promise.reject(err)
   }
-);
+)
 
-export default commonAxios;
+export default commonAxios
