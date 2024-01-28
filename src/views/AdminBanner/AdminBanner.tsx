@@ -5,7 +5,7 @@ import { useRouter } from 'next/router'
 import { useIsMounted } from 'usehooks-ts'
 import Slider from 'react-slick'
 import useStyles from './AdminBanner.style'
-import { Box } from '@mui/material'
+import { Box, Typography } from '@mui/material'
 import AppBanner from '@/components/AppBanner'
 import AppAdminMenu from '@/components/AppAdminMenu'
 import Head from 'next/head'
@@ -39,25 +39,24 @@ export default function AdminBanner() {
       <main>
         <Box
           sx={{
-            minHeight: '100vh',
-            width: '100vw',
-            display: 'flex',
-            flexDirection: 'row',
-            justifyContent: 'center',
-            alignItems: 'center',
+            width: '100%',
+            height: '100vh',
+            padding: '24px',
+            overflow: 'auto',
             backgroundColor: '#f4f0ed',
-            color: 'black',
           }}
         >
-          <AppAdminMenu />
-          <Box
+          <Typography
+            variant="headerSemi35"
             sx={{
-              width: '100%',
-              height: '100vh',
-              overflow: 'auto',
-              backgroundColor: '#f4f0ed',
+              fontFamily: 'Mulish',
+              fontWeight: 700,
+              fontSize: '36px',
+              color: '#1a1a1a',
             }}
-          ></Box>
+          >
+            Chỉnh sửa Banner
+          </Typography>
         </Box>
       </main>
     </>
