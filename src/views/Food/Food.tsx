@@ -7,6 +7,7 @@ import Slider from 'react-slick'
 import useStyles from './Food.style'
 import { Box } from '@mui/material'
 import AppBanner from '@/components/AppBanner'
+import { API_HOST, MEDIA_STORAGE } from '@/utils/configs/common'
 
 const TAB_TITLES = ['News', 'Promotion']
 
@@ -40,9 +41,14 @@ export default function Food() {
         alignItems: 'center',
         backgroundColor: '#f4f0ed',
         color: 'black',
+
+        '& img': {
+          height: '800px',
+          width: '600px',
+        },
       }}
     >
-      Coming soon...
+      <img src={`${API_HOST}/uploads/ssl.jpg`} alt="" />
     </Box>
   )
 }
