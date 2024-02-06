@@ -29,6 +29,7 @@ import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline'
 import CheckCircleIcon from '@mui/icons-material/CheckCircle'
 import CancelIcon from '@mui/icons-material/Cancel'
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline'
+import { API_HOST } from '@/utils/configs/common'
 
 export default function AdminCategory() {
   const { t, i18n } = useTranslation()
@@ -42,6 +43,22 @@ export default function AdminCategory() {
   const [isShowNewPopup, setIsShowNewPopup] = useState<boolean>(false)
   const [newActive, setNewActive] = useState<boolean>(true)
   const [newName, setNewName] = useState<string>('')
+  const [newFile, setNewFile] = useState<File | null>(null)
+  const [newThumbnailPreview, setNewThumbnailPreview] = useState<string | null>(null)
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      const selectedFile = e.target.files[0]
+      setNewFile(selectedFile)
+
+      // Preview the selected image
+      const reader = new FileReader()
+      reader.onload = () => {
+        setNewThumbnailPreview(reader.result as string)
+      }
+      reader.readAsDataURL(selectedFile)
+    }
+  }
 
   let GetCategoryList = async () => {
     try {
@@ -56,11 +73,19 @@ export default function AdminCategory() {
 
   let CreateNewCategory = async () => {
     try {
+      if (!newFile) {
+        alert('Vui lòng chọn ảnh đại diện!')
+        return
+      } else if (newName.length === 0) {
+        alert('Vui lòng nhập tên danh mục!')
+        return
+      }
       setIsLoading(true)
       let res = await categoryApi.createCategory({
         params: {
           name: newName,
-          active: newActive,
+          thumbnail: newFile,
+          active: newActive ? 1 : 0,
         },
       })
       if (res.data.status) {
@@ -243,6 +268,14 @@ export default function AdminCategory() {
                 value={newName}
                 onChange={(e) => setNewName(e.target.value)}
               />
+              <input type="file" accept="image/*" onChange={handleFileChange} style={{ display: 'none' }} id="upload-image" />
+              <label htmlFor="upload-image">
+                <Button variant="contained" component="span">
+                  Chọn ảnh đại diện
+                </Button>
+              </label>
+              {newThumbnailPreview && <img src={newThumbnailPreview} alt="Selected" style={{ marginTop: '10px', maxWidth: '100%' }} />}
+              {newFile && <Typography sx={{ color: '#1a1a1a' }}>{newFile.name}</Typography>}
               <FormControl
                 sx={{
                   display: 'flex',
@@ -303,7 +336,7 @@ export default function AdminCategory() {
               </Grid>
               <Grid
                 item
-                xs={6}
+                xs={3}
                 sx={{
                   textAlign: 'center',
                   color: '#fff',
@@ -316,6 +349,22 @@ export default function AdminCategory() {
                 }}
               >
                 Tên danh mục
+              </Grid>
+              <Grid
+                item
+                xs={3}
+                sx={{
+                  textAlign: 'center',
+                  color: '#fff',
+                  fontWeight: 600,
+                  fontSize: '16px',
+                  borderTop: '1px solid #DBB070',
+                  borderBottom: '1px solid #DBB070',
+                  padding: '12px 6px',
+                  backgroundColor: '#DBB070',
+                }}
+              >
+                Ảnh đại diện
               </Grid>
               <Grid
                 item
@@ -384,7 +433,7 @@ export default function AdminCategory() {
                 </Grid>
                 <Grid
                   item
-                  xs={6}
+                  xs={3}
                   sx={{
                     color: '#1a1a1a',
                     fontSize: '16px',
@@ -397,6 +446,28 @@ export default function AdminCategory() {
                   }}
                 >
                   {editIndex === index ? <TextField fullWidth value={editContent} onChange={(e) => setEditContent(e.target.value)}></TextField> : <span>{item.name}</span>}
+                </Grid>
+                <Grid
+                  item
+                  xs={3}
+                  sx={{
+                    color: '#1a1a1a',
+                    fontSize: '16px',
+                    fontWeight: 600,
+                    textAlign: 'left',
+                    borderBottom: '1px solid #DBB070',
+                    borderTop: 'none',
+                    padding: '12px 24px',
+
+                    '& img': {
+                      width: '90%',
+                      height: 'auto',
+                      maxHeight: '120px',
+                      marginX: 'auto',
+                    },
+                  }}
+                >
+                  <img src={item.thumbnail} width="100%" height="auto" />
                 </Grid>
                 <Grid
                   item
@@ -433,6 +504,7 @@ export default function AdminCategory() {
                     border: '1px solid #DBB070',
                     borderTop: 'none',
                     padding: '12px 6px',
+                    gap: '8px',
                   }}
                 >
                   {editIndex === index ? (
