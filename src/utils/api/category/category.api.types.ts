@@ -22,6 +22,6 @@ export type CREATE_CATEGORY_DTO = {
   params: {
     name: string
     thumbnail: File
-    active: number
+    active: '1' | '0'
   }
 }

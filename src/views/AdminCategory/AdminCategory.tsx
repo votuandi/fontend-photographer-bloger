@@ -45,6 +45,8 @@ export default function AdminCategory() {
   const [newName, setNewName] = useState<string>('')
   const [newFile, setNewFile] = useState<File | null>(null)
   const [newThumbnailPreview, setNewThumbnailPreview] = useState<string | null>(null)
+  const [updateFile, setUpdateFile] = useState<File | null>(null)
+  const [updateThumbnailPreview, setUpdateThumbnailPreview] = useState<string | null>(null)
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
@@ -55,6 +57,20 @@ export default function AdminCategory() {
       const reader = new FileReader()
       reader.onload = () => {
         setNewThumbnailPreview(reader.result as string)
+      }
+      reader.readAsDataURL(selectedFile)
+    }
+  }
+
+  const handleUpdateFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      const selectedFile = e.target.files[0]
+      setUpdateFile(selectedFile)
+
+      // Preview the selected image
+      const reader = new FileReader()
+      reader.onload = () => {
+        setUpdateThumbnailPreview(reader.result as string)
       }
       reader.readAsDataURL(selectedFile)
     }
@@ -85,12 +101,14 @@ export default function AdminCategory() {
         params: {
           name: newName,
           thumbnail: newFile,
-          active: newActive ? 1 : 0,
+          active: newActive ? '1' : '0',
         },
       })
       if (res.data.status) {
+        alert('Create new category successfully!')
         await GetCategoryList()
         setIsLoading(false)
+        setIsShowNewPopup(false)
       } else {
         alert(`Create new category failed!\n${res.data.message}`)
         setIsLoading(false)
@@ -123,6 +141,8 @@ export default function AdminCategory() {
   let handleNewEvent = () => {
     setNewActive(true)
     setNewName('')
+    setNewFile(null)
+    setNewThumbnailPreview('')
     setIsShowNewPopup(true)
   }
 
@@ -133,6 +153,8 @@ export default function AdminCategory() {
     setEditIndex(index)
     setEditContent(categoryList[index].name)
     setEditActive(categoryList[index].active)
+    setUpdateFile(null)
+    setUpdateThumbnailPreview(categoryList[index]?.thumbnail)
   }
 
   let handleUpdate = async (index: number) => {
@@ -406,6 +428,7 @@ export default function AdminCategory() {
                 sx={{
                   width: '100%',
                   fontFamily: 'Mulish',
+                  backgroundColor: index === editIndex ? '#DBB07020' : '#fff',
 
                   '& .MuiGrid-item': {
                     display: 'flex',
@@ -445,7 +468,27 @@ export default function AdminCategory() {
                     justifyContent: 'start !important',
                   }}
                 >
-                  {editIndex === index ? <TextField fullWidth value={editContent} onChange={(e) => setEditContent(e.target.value)}></TextField> : <span>{item.name}</span>}
+                  {editIndex === index ? (
+                    <TextField
+                      sx={{
+                        backgroundColor: '#fff',
+                        borderRadius: '12px',
+
+                        '& fieldset': {
+                          borderColor: '#DBB070',
+                        },
+
+                        '& .MuiFormLabel-root': {
+                          color: '#DBB070',
+                        },
+                      }}
+                      fullWidth
+                      value={editContent}
+                      onChange={(e) => setEditContent(e.target.value)}
+                    ></TextField>
+                  ) : (
+                    <span>{item.name}</span>
+                  )}
                 </Grid>
                 <Grid
                   item
@@ -467,7 +510,25 @@ export default function AdminCategory() {
                     },
                   }}
                 >
-                  <img src={item.thumbnail} width="100%" height="auto" />
+                  {editIndex === index ? (
+                    <Box
+                      sx={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                      }}
+                    >
+                      <input type="file" accept="image/*" onChange={handleUpdateFileChange} style={{ display: 'none' }} id="upload-image" />
+                      <label htmlFor="upload-image">
+                        <Button sx={{ backgroundColor: '#DBB070', borderRadius: '4px' }} variant="contained" component="span">
+                          Chọn ảnh khác
+                        </Button>
+                      </label>
+                      {updateThumbnailPreview && <img src={updateThumbnailPreview} alt="Selected" style={{ marginTop: '10px', width: '100%' }} />}
+                      {updateFile && <Typography sx={{ color: '#1a1a1a' }}>{updateFile.name}</Typography>}
+                    </Box>
+                  ) : (
+                    <img src={item.thumbnail} width="100%" height="auto" />
+                  )}
                 </Grid>
                 <Grid
                   item
