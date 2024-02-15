@@ -5,7 +5,7 @@ import { useRouter } from 'next/router'
 import { useIsMounted } from 'usehooks-ts'
 import Slider from 'react-slick'
 import useStyles from './AdminArticle.style'
-import { Box, Button, CircularProgress, FormControl, FormLabel, InputLabel, MenuItem, Select, Switch, TextField, Typography } from '@mui/material'
+import { Box, Button, CircularProgress, FormControl, FormLabel, Grid, InputLabel, MenuItem, Select, Switch, TextField, Typography } from '@mui/material'
 import AppBanner from '@/components/AppBanner'
 import AppAdminMenu from '@/components/AppAdminMenu'
 import Head from 'next/head'
@@ -19,6 +19,10 @@ import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker'
 import { DemoContainer } from '@mui/x-date-pickers/internals/demo'
 import dayjs, { Dayjs } from 'dayjs'
 import { articleApi } from '@/utils/api'
+import { ARTICLE_ITEM_TYPE } from '@/utils/api/article'
+import { formatDate } from '@/utils/helpers/common'
+import BorderColorIcon from '@mui/icons-material/BorderColor'
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline'
 
 export default function AdminArticle() {
   const { t, i18n } = useTranslation()
@@ -37,6 +41,17 @@ export default function AdminArticle() {
   const [categoryList, setCategoryList] = useState<CATEGORY_ITEM_TYPE[]>([])
   const [newInvalid, setNewInvalid] = useState<boolean>(false)
   const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [articleList, setArticleList] = useState<ARTICLE_ITEM_TYPE[]>([])
+  const [editIndex, setEditIndex] = useState<number>(-1)
+  const [editTitle, setEditTitle] = useState<string>('')
+  const [editShortDescription, setEditShortDescription] = useState<string>('')
+  const [editCreateBy, setEditCreateBy] = useState<string>('Admin')
+  const [editPublicTime, setEditPublicTime] = useState<Date>()
+  const [editHashtag, setEditHashtag] = useState<string>('')
+  const [editCategoryId, setEditCategoryId] = useState<string | null>(null)
+  const [editActive, setEditActive] = useState<boolean>(true)
+  const [updateFile, setUpdateFile] = useState<File | null>(null)
+  const [updateThumbnailPreview, setUpdateThumbnailPreview] = useState<string | null>(null)
 
   let handleNewEvent = () => {
     setNewActive(true)
@@ -55,6 +70,21 @@ export default function AdminArticle() {
     if (value) {
       setNewPublicTime(value.toDate())
     }
+  }
+
+  let handleEditEvent = (index: number, isActive: boolean) => {
+    if (editIndex != -1) {
+      if (!confirm('Bạn đang chỉnh sửa 1 Danh mục khác và chưa lưu. Xác nhận thay đổi Danh mục cần chỉnh sửa?')) return
+    }
+    setEditIndex(index)
+    setEditTitle(articleList[index].title)
+    setEditShortDescription(articleList[index].shortDescription)
+    setEditActive(articleList[index].active)
+    setEditPublicTime(new Date(articleList[index].publicTime))
+    setEditHashtag(articleList[index].hashtag)
+    setEditCategoryId(articleList[index].category.id)
+    setUpdateFile(null)
+    setUpdateThumbnailPreview(categoryList[index]?.thumbnail)
   }
 
   let handleNewFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -76,6 +106,17 @@ export default function AdminArticle() {
       let res = await categoryApi.getList()
       if (res.data.status) {
         setCategoryList(res.data.params)
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  let GetArticleList = async () => {
+    try {
+      let res = await articleApi.getList()
+      if (res.data.status) {
+        setArticleList(res.data.params)
       }
     } catch (error) {
       console.log(error)
@@ -126,6 +167,7 @@ export default function AdminArticle() {
   }
 
   let FetchData = async () => {
+    await GetArticleList()
     await GetCategoryList()
   }
 
@@ -413,6 +455,261 @@ export default function AdminArticle() {
               </Box>
             </Box>
           )}
+          <Box
+            sx={{
+              width: '100%',
+              maxWidth: '1200px',
+              mx: 'auto',
+              gap: '12px',
+              display: 'flex',
+              flexDirection: 'column',
+            }}
+          >
+            {articleList.map((item, index) => (
+              <Box
+                sx={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  borderRadius: '8px',
+                  border: '2px solid #DBB070',
+                  padding: '6px 10px',
+                  cursor: 'pointer',
+                  backgroundColor: index === editIndex ? '#DBB07020' : '#fff',
+
+                  '&:hover': {
+                    boxShadow: 3,
+                    backgroundColor: '#DBB07020',
+                  },
+                }}
+              >
+                <Grid container>
+                  <Grid
+                    item
+                    xs={3}
+                    sx={{
+                      '& img': {
+                        width: '100%',
+                        height: 'auto',
+                        maxHeight: '300px',
+                        borderRadius: '8px',
+                      },
+                    }}
+                  >
+                    <img src={item.thumbnail} alt="" />
+                  </Grid>
+                  <Grid
+                    item
+                    xs={6}
+                    sx={{
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: editIndex === index ? '10px' : '4px',
+                      padding: editIndex === index ? '8px 12px' : '0px 12px',
+                    }}
+                  >
+                    {editIndex === index ? (
+                      <TextField
+                        id="new-title"
+                        label="Tên bài viết"
+                        variant="outlined"
+                        fullWidth
+                        sx={{
+                          borderRadius: '12px',
+                          color: '#0596A6',
+                          fontFamily: 'Mulish',
+
+                          '& fieldset': {
+                            borderColor: '#0596A6',
+                            backgroundColor: '#fff',
+                          },
+
+                          '& .MuiFormLabel-root': {
+                            color: '#0596A6',
+                          },
+
+                          '& .MuiFormHelperText-root': {
+                            backgroundColor: 'transparent',
+                            color: 'red',
+                          },
+                          '& input': {
+                            zIndex: 1,
+                          },
+                        }}
+                        value={editTitle}
+                        onChange={(e) => setEditTitle(e.target.value)}
+                        // helperText={newInvalid && newTitle.length === 0 && 'Vui lòng nhập tên bài viết'}
+                      />
+                    ) : (
+                      <Typography
+                        sx={{
+                          fontFamily: 'Mulish',
+                          fontSize: '28px',
+                          fontWeight: 700,
+                          color: '#1a1a1a',
+                        }}
+                        className="text-2-line"
+                      >
+                        {item.title}
+                      </Typography>
+                    )}
+                    {editIndex === index ? (
+                      <TextField
+                        id="new-short-description"
+                        label="Trích dẫn"
+                        variant="outlined"
+                        multiline
+                        rows={4}
+                        fullWidth
+                        sx={{
+                          borderRadius: '12px',
+                          fontFamily: 'Mulish',
+                          color: '#0596A6',
+
+                          '& fieldset': {
+                            borderColor: '#0596A6',
+                            backgroundColor: '#fff',
+                          },
+
+                          '& .MuiFormLabel-root': {
+                            color: '#0596A6',
+                          },
+
+                          '& .MuiFormHelperText-root': {
+                            backgroundColor: 'transparent',
+                            color: 'red',
+                          },
+                          '& textarea': {
+                            zIndex: 1,
+                          },
+                        }}
+                        // helperText={newInvalid && newShortDescription.length === 0 && 'Vui lòng nhập trích dẫn'}
+                        value={editShortDescription}
+                        onChange={(e) => setEditShortDescription(e.target.value)}
+                      />
+                    ) : (
+                      <Typography
+                        sx={{
+                          fontFamily: 'Mulish',
+                          fontSize: '28px',
+                          fontWeight: 700,
+                          color: '#1a1a1a',
+                        }}
+                        className="text-2-line"
+                      >
+                        {item.shortDescription}
+                      </Typography>
+                    )}
+                  </Grid>
+                  <Grid
+                    item
+                    xs={3}
+                    sx={{
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: '4px',
+                      padding: '0px 12px',
+                    }}
+                  >
+                    <Box sx={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap', gap: '4px' }}>
+                      <Typography sx={{ fontFamily: 'Mulish', fontSize: '18px', fontWeight: 600, color: '#1a1a1a' }}>Hashtag:</Typography>
+                      {item.hashtag.split(',').map((htag, htIndex) => (
+                        <Typography key={htIndex} sx={{ fontFamily: 'Mulish', fontSize: '18px', fontWeight: 700, color: '#1D2FAD' }}>
+                          #{htag}
+                        </Typography>
+                      ))}
+                    </Box>
+                    <Box sx={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap', gap: '4px' }}>
+                      <Typography sx={{ fontFamily: 'Mulish', fontSize: '18px', fontWeight: 600, color: '#1a1a1a' }}>Danh mục:</Typography>
+                      <Typography sx={{ fontFamily: 'Mulish', fontSize: '18px', fontWeight: 700, color: '#936F48' }}>{item?.category?.name}</Typography>
+                    </Box>
+                    <Box sx={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap', gap: '4px' }}>
+                      <Typography sx={{ fontFamily: 'Mulish', fontSize: '18px', fontWeight: 600, color: '#1a1a1a' }}>Thời gian đăng bài:</Typography>
+                      <Typography sx={{ fontFamily: 'Mulish', fontSize: '18px', fontWeight: 700, color: '#936F48' }}>{formatDate(new Date(item?.publicTime ?? ''))}</Typography>
+                    </Box>
+                  </Grid>
+                  <Grid
+                    item
+                    xs={12}
+                    sx={{
+                      display: 'flex',
+                      flexDirection: 'row',
+                      justifyContent: 'space-between',
+                    }}
+                  >
+                    <FormControl
+                      sx={{
+                        display: 'flex',
+                        flexDirection: 'row',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        fontFamily: 'Mulish',
+                        fontWeight: 700,
+                        color: '#1a1a1a',
+                      }}
+                    >
+                      <FormLabel>Kích hoạt: </FormLabel>
+                      <Switch checked={item?.active}></Switch>
+                    </FormControl>
+                    <Box
+                      sx={{
+                        color: '#1a1a1a',
+                        fontSize: '16px',
+                        fontWeight: 400,
+                        display: 'flex',
+                        flexDirection: 'row',
+                        flexWrap: 'wrap',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        columnGap: '8px',
+                        gap: '8px',
+                        fontFamily: 'Mulish',
+                      }}
+                    >
+                      {editIndex === index ? (
+                        <>
+                          <Button
+                            variant="contained"
+                            // onClick={() => handleUpdate(index)}
+                            startIcon={<CheckCircleIcon sx={{ width: '16px', height: '16px' }} />}
+                            sx={{ fontSize: '16', fontWeight: 600, backgroundColor: '#28BFDF  ', '&:hover': { backgroundColor: '#28BFDF ' } }}
+                          >
+                            OK
+                          </Button>
+                          <Button
+                            variant="contained"
+                            onClick={() => setEditIndex(-1)}
+                            color="warning"
+                            startIcon={<CancelIcon sx={{ width: '16px', height: '16px' }} />}
+                            sx={{ fontSize: '16', fontWeight: 600 }}
+                          >
+                            Cancel
+                          </Button>
+                        </>
+                      ) : (
+                        <>
+                          <Button
+                            variant="contained"
+                            onClick={() => handleEditEvent(index, item.active)}
+                            startIcon={<BorderColorIcon sx={{ width: '16px', height: '16px' }} />}
+                            sx={{ fontSize: '16', fontWeight: 600, backgroundColor: '#93B775', '&:hover': { backgroundColor: '#7F9C20  ' } }}
+                          >
+                            Sửa
+                          </Button>
+                          <Button
+                            variant="contained"
+                            startIcon={<DeleteOutlineIcon sx={{ width: '16px', height: '16px' }} />}
+                            sx={{ fontSize: '16', fontWeight: 600, backgroundColor: '#fa4653', '&:hover': { backgroundColor: '#c53b42  ' } }}
+                          >
+                            Xóa
+                          </Button>
+                        </>
+                      )}
+                    </Box>
+                  </Grid>
+                </Grid>
+              </Box>
+            ))}
+          </Box>
           {isLoading && (
             <Box
               sx={{

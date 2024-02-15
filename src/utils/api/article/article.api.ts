@@ -4,9 +4,9 @@ import type { AxiosResponseData } from '@/utils/axios'
 import { CREATE_ARTICLE_DTO } from './article.api.types'
 
 const articleApi = {
-  // getList: () => {
-  //   return commonAxios.get<AxiosResponseData>('/categories')
-  // },
+  getList: () => {
+    return commonAxios.get<AxiosResponseData>('/articles')
+  },
 
   createArticle: (payload: CREATE_ARTICLE_DTO) => {
     return formDataAxios.post<AxiosResponseData>('/articles/', {
