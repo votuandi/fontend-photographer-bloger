@@ -90,7 +90,7 @@ export default function AdminArticle() {
     setEditHashtag(articleList[index].hashtag)
     setEditCategoryId(articleList[index].category.id)
     setUpdateFile(null)
-    setUpdateThumbnailPreview(categoryList[index]?.thumbnail)
+    setUpdateThumbnailPreview(articleList[index]?.thumbnail)
   }
 
   let handleUpdate = async (index: number) => {
@@ -121,6 +121,20 @@ export default function AdminArticle() {
       const reader = new FileReader()
       reader.onload = () => {
         setNewThumbnailPreview(reader.result as string)
+      }
+      reader.readAsDataURL(selectedFile)
+    }
+  }
+
+  let handleUpdateFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      const selectedFile = e.target.files[0]
+      setUpdateFile(selectedFile)
+
+      // Preview the selected image
+      const reader = new FileReader()
+      reader.onload = () => {
+        setUpdateThumbnailPreview(reader.result as string)
       }
       reader.readAsDataURL(selectedFile)
     }
@@ -339,7 +353,7 @@ export default function AdminArticle() {
                   },
                 }}
                 value={newTitle}
-                onChange={(e) => setNewTitle(e.target.value)}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNewTitle(e.target.value)}
                 helperText={newInvalid && newTitle.length === 0 && 'Vui lòng nhập tên bài viết'}
               />
               <TextField
@@ -372,7 +386,7 @@ export default function AdminArticle() {
                 }}
                 helperText={newInvalid && newShortDescription.length === 0 && 'Vui lòng nhập trích dẫn'}
                 value={newShortDescription}
-                onChange={(e) => setNewShortDescription(e.target.value)}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNewShortDescription(e.target.value)}
               />
               <TextField
                 id="new-hashtag"
@@ -392,7 +406,7 @@ export default function AdminArticle() {
                   },
                 }}
                 value={newHashtag}
-                onChange={(e) => setNewHashtag(e.target.value)}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNewHashtag(e.target.value)}
               />
               <FormControl fullWidth>
                 <InputLabel
@@ -415,7 +429,7 @@ export default function AdminArticle() {
                   labelId="category-label"
                   id="category-select"
                   defaultValue=""
-                  onChange={(e) => setNewCategoryId(e.target.value)}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNewCategoryId(e.target.value)}
                 >
                   {categoryList.map((category) => (
                     <MenuItem
@@ -536,10 +550,24 @@ export default function AdminArticle() {
                         height: 'auto',
                         maxHeight: '300px',
                         borderRadius: '8px',
+                        display: 'flex',
                       },
                     }}
                   >
-                    <img src={item.thumbnail} alt="" />
+                    {editIndex === index ? (
+                      <>
+                        <input type="file" accept="image/*" onChange={handleUpdateFileChange} style={{ display: 'none' }} id="upload-image" />
+                        <label htmlFor="upload-image">
+                          <Button variant="contained" component="span">
+                            Chọn ảnh đại diện
+                          </Button>
+                        </label>
+                        {updateThumbnailPreview && <img src={updateThumbnailPreview} alt="Selected" style={{ marginTop: '10px', maxWidth: '100%' }} />}
+                        {updateFile && <Typography sx={{ color: '#1a1a1a' }}>{updateFile.name}</Typography>}
+                      </>
+                    ) : (
+                      <img src={item.thumbnail} alt="" />
+                    )}
                   </Grid>
                   <Grid
                     item
@@ -580,7 +608,7 @@ export default function AdminArticle() {
                           },
                         }}
                         value={editTitle}
-                        onChange={(e) => setEditTitle(e.target.value)}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEditTitle(e.target.value)}
                         // helperText={newInvalid && newTitle.length === 0 && 'Vui lòng nhập tên bài viết'}
                       />
                     ) : (
@@ -628,7 +656,7 @@ export default function AdminArticle() {
                         }}
                         // helperText={newInvalid && newShortDescription.length === 0 && 'Vui lòng nhập trích dẫn'}
                         value={editShortDescription}
-                        onChange={(e) => setEditShortDescription(e.target.value)}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEditShortDescription(e.target.value)}
                       />
                     ) : (
                       <Typography
@@ -702,7 +730,7 @@ export default function AdminArticle() {
                             },
                           }}
                           value={editHashtag}
-                          onChange={(e) => setEditHashtag(e.target.value)}
+                          onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEditHashtag(e.target.value)}
                         />
                       ) : (
                         <>
@@ -738,7 +766,7 @@ export default function AdminArticle() {
                             labelId="category-label"
                             id="category-select"
                             defaultValue={editCategoryId}
-                            onChange={(e) => setEditCategoryId(e.target.value)}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEditCategoryId(e.target.value)}
                           >
                             {categoryList.map((category) => (
                               <MenuItem

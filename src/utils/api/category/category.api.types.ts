@@ -14,7 +14,8 @@ export type CATEGORY_ITEM_TYPE = {
 export type UPDATE_CATEGORY_DTO = {
   params: {
     name: string
-    active: boolean
+    active: '1' | '0'
+    thumbnail: File | undefined
   }
 }
 

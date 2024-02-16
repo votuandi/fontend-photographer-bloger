@@ -123,6 +123,8 @@ export default function AdminCategory() {
   let UpdateCategory = async (id: string, updateCategoryDto: UPDATE_CATEGORY_DTO) => {
     try {
       setIsLoading(true)
+      console.log(updateCategoryDto)
+
       let res = await categoryApi.updateCategory(id, updateCategoryDto)
       if (res.data.status) {
         await GetCategoryList()
@@ -161,9 +163,12 @@ export default function AdminCategory() {
     let updateCategoryDto: UPDATE_CATEGORY_DTO = {
       params: {
         name: editContent,
-        active: editActive,
+        active: editActive ? '1' : '0',
+        thumbnail: updateFile ? updateFile : undefined,
       },
     }
+    console.log(updateCategoryDto)
+
     await UpdateCategory(categoryList[index].id, updateCategoryDto)
   }
 
@@ -288,7 +293,7 @@ export default function AdminCategory() {
                   },
                 }}
                 value={newName}
-                onChange={(e) => setNewName(e.target.value)}
+                onChange={(e: any) => setNewName(e.target.value)}
               />
               <input type="file" accept="image/*" onChange={handleFileChange} style={{ display: 'none' }} id="upload-image" />
               <label htmlFor="upload-image">
@@ -484,7 +489,7 @@ export default function AdminCategory() {
                       }}
                       fullWidth
                       value={editContent}
-                      onChange={(e) => setEditContent(e.target.value)}
+                      onChange={(e: any) => setEditContent(e.target.value)}
                     ></TextField>
                   ) : (
                     <span>{item.name}</span>

@@ -15,7 +15,9 @@ const articleApi = {
   },
 
   updateArticle: (id: string, payload: UPDATE_ARTICLE_DTO) => {
-    return commonAxios.put<AxiosResponseData>(`/articles/${id}`, {
+    console.log(payload.params.thumbnail)
+
+    return formDataAxios.put<AxiosResponseData>(`/articles/${id}`, {
       ...payload.params,
     })
   },

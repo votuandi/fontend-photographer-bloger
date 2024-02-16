@@ -15,7 +15,7 @@ const categoryApi = {
   },
 
   updateCategory: (id: string, payload: UPDATE_CATEGORY_DTO) => {
-    return commonAxios.put<AxiosResponseData>(`/categories/${id}`, {
+    return formDataAxios.put<AxiosResponseData>(`/categories/${id}`, {
       ...payload.params,
     })
   },
