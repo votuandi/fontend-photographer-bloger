@@ -4,12 +4,17 @@ export type GET_ARTICLE_LIST_PAYLOAD = {
 
 export type GET_ARTICLE_LIST_RESPONSE = ARTICLE_ITEM_TYPE[]
 
-// export type UPDATE_CATEGORY_DTO = {
-//   params: {
-//     name: string
-//     active: boolean
-//   }
-// }
+export type UPDATE_ARTICLE_DTO = {
+  params: {
+    title: string
+    shortDescription: string
+    publicTime: string
+    hashtag: string
+    categoryId: string
+    active: '1' | '0'
+    thumbnail: File | undefined
+  }
+}
 
 export type CREATE_ARTICLE_DTO = {
   params: {

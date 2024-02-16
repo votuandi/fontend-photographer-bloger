@@ -19,7 +19,7 @@ import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker'
 import { DemoContainer } from '@mui/x-date-pickers/internals/demo'
 import dayjs, { Dayjs } from 'dayjs'
 import { articleApi } from '@/utils/api'
-import { ARTICLE_ITEM_TYPE } from '@/utils/api/article'
+import { ARTICLE_ITEM_TYPE, UPDATE_ARTICLE_DTO } from '@/utils/api/article'
 import { formatDate } from '@/utils/helpers/common'
 import BorderColorIcon from '@mui/icons-material/BorderColor'
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline'
@@ -72,6 +72,12 @@ export default function AdminArticle() {
     }
   }
 
+  let handleUpdatePublicDateTimePickerChange = (value: Dayjs | null) => {
+    if (value) {
+      setEditPublicTime(value.toDate())
+    }
+  }
+
   let handleEditEvent = (index: number, isActive: boolean) => {
     if (editIndex != -1) {
       if (!confirm('Bạn đang chỉnh sửa 1 Danh mục khác và chưa lưu. Xác nhận thay đổi Danh mục cần chỉnh sửa?')) return
@@ -85,6 +91,25 @@ export default function AdminArticle() {
     setEditCategoryId(articleList[index].category.id)
     setUpdateFile(null)
     setUpdateThumbnailPreview(categoryList[index]?.thumbnail)
+  }
+
+  let handleUpdate = async (index: number) => {
+    if (editTitle.length === 0 || editShortDescription.length === 0) {
+      alert('Tiêu đề và trích dẫn không được để trống!')
+      return
+    }
+    let updateArticleDto: UPDATE_ARTICLE_DTO = {
+      params: {
+        title: editTitle,
+        shortDescription: editShortDescription,
+        publicTime: (editPublicTime ?? new Date()).toString(),
+        hashtag: editHashtag,
+        categoryId: editCategoryId!,
+        active: editActive ? '1' : '0',
+        thumbnail: updateFile ? updateFile : undefined,
+      },
+    }
+    await UpdateArticle(articleList[index].id, updateArticleDto)
   }
 
   let handleNewFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -144,7 +169,7 @@ export default function AdminArticle() {
       })
       if (res.data.status) {
         alert('Create new article successfully!')
-        // await GetCategoryList()
+        await GetArticleList()
         setIsLoading(false)
         setIsShowNewPopup(false)
       } else {
@@ -154,6 +179,24 @@ export default function AdminArticle() {
       }
     } catch (error) {
       console.log(error)
+    }
+  }
+
+  let UpdateArticle = async (id: string, updateArticleDto: UPDATE_ARTICLE_DTO) => {
+    try {
+      setIsLoading(true)
+      let res = await articleApi.updateArticle(id, updateArticleDto)
+      if (res.data.status) {
+        await GetArticleList()
+        setEditIndex(-1)
+        setIsLoading(false)
+      } else {
+        alert(`Update failed!\n${res.data.message}`)
+        setIsLoading(false)
+      }
+    } catch (error) {
+      console.log(error)
+      setIsLoading(false)
     }
   }
 
@@ -467,14 +510,15 @@ export default function AdminArticle() {
           >
             {articleList.map((item, index) => (
               <Box
+                key={index}
                 sx={{
                   display: 'flex',
                   flexDirection: 'column',
                   borderRadius: '8px',
-                  border: '2px solid #DBB070',
+                  border: '1px solid #DBB070',
                   padding: '6px 10px',
                   cursor: 'pointer',
-                  backgroundColor: index === editIndex ? '#DBB07020' : '#fff',
+                  backgroundColor: index === editIndex ? '#DBB07010' : '#fff',
 
                   '&:hover': {
                     boxShadow: 3,
@@ -590,14 +634,41 @@ export default function AdminArticle() {
                       <Typography
                         sx={{
                           fontFamily: 'Mulish',
-                          fontSize: '28px',
-                          fontWeight: 700,
+                          fontSize: '18px',
+                          fontWeight: 400,
                           color: '#1a1a1a',
                         }}
                         className="text-2-line"
                       >
                         {item.shortDescription}
                       </Typography>
+                    )}
+                    {editIndex === index && (
+                      <LocalizationProvider dateAdapter={AdapterDayjs}>
+                        <DemoContainer components={['DateTimePicker']}>
+                          <DateTimePicker
+                            onChange={handleUpdatePublicDateTimePickerChange}
+                            sx={{
+                              color: '#0596A6',
+                              width: '100%',
+
+                              '& fieldset': {
+                                backgroundColor: '#fff',
+                              },
+
+                              '& .MuiInputAdornment-root': {
+                                zIndex: 1,
+                              },
+
+                              '& input': {
+                                zIndex: 1,
+                              },
+                            }}
+                            defaultValue={dayjs(editPublicTime)}
+                            label="Chọn thời gian đăng bài"
+                          />
+                        </DemoContainer>
+                      </LocalizationProvider>
                     )}
                   </Grid>
                   <Grid
@@ -606,25 +677,101 @@ export default function AdminArticle() {
                     sx={{
                       display: 'flex',
                       flexDirection: 'column',
-                      gap: '4px',
-                      padding: '0px 12px',
+                      gap: editIndex === index ? '16px' : '4px',
+                      padding: editIndex === index ? '8px 12px' : '0px 12px',
                     }}
                   >
                     <Box sx={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap', gap: '4px' }}>
-                      <Typography sx={{ fontFamily: 'Mulish', fontSize: '18px', fontWeight: 600, color: '#1a1a1a' }}>Hashtag:</Typography>
-                      {item.hashtag.split(',').map((htag, htIndex) => (
-                        <Typography key={htIndex} sx={{ fontFamily: 'Mulish', fontSize: '18px', fontWeight: 700, color: '#1D2FAD' }}>
-                          #{htag}
-                        </Typography>
-                      ))}
+                      {editIndex === index ? (
+                        <TextField
+                          id="new-hashtag"
+                          label="Hashtag (cách nhau bởi dấu phẩy)"
+                          variant="outlined"
+                          fullWidth
+                          sx={{
+                            backgroundColor: '#fff',
+                            borderRadius: '12px',
+                            fontFamily: 'Mulish',
+
+                            '& fieldset': {
+                              borderColor: '#0596A6',
+                            },
+
+                            '& .MuiFormLabel-root': {
+                              color: '#0596A6',
+                            },
+                          }}
+                          value={editHashtag}
+                          onChange={(e) => setEditHashtag(e.target.value)}
+                        />
+                      ) : (
+                        <>
+                          <Typography sx={{ fontFamily: 'Mulish', fontSize: '18px', fontWeight: 600, color: '#1a1a1a' }}>Hashtag:</Typography>
+                          {item.hashtag.split(',').map((htag, htIndex) => (
+                            <Typography key={htIndex} sx={{ fontFamily: 'Mulish', fontSize: '18px', fontWeight: 700, color: '#1D2FAD' }}>
+                              #{htag}
+                            </Typography>
+                          ))}
+                        </>
+                      )}
                     </Box>
                     <Box sx={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap', gap: '4px' }}>
-                      <Typography sx={{ fontFamily: 'Mulish', fontSize: '18px', fontWeight: 600, color: '#1a1a1a' }}>Danh mục:</Typography>
-                      <Typography sx={{ fontFamily: 'Mulish', fontSize: '18px', fontWeight: 700, color: '#936F48' }}>{item?.category?.name}</Typography>
+                      {editIndex === index ? (
+                        <FormControl fullWidth>
+                          <InputLabel
+                            sx={{
+                              color: '#0596A6',
+                              backgroundColor: '#fff',
+                            }}
+                            id="category-label"
+                          >
+                            Chọn danh mục
+                          </InputLabel>
+                          <Select
+                            sx={{
+                              backgroundColor: '#fff',
+                              '& .MuiFormHelperText-root': {
+                                backgroundColor: 'transparent',
+                                color: 'red',
+                              },
+                            }}
+                            labelId="category-label"
+                            id="category-select"
+                            defaultValue={editCategoryId}
+                            onChange={(e) => setEditCategoryId(e.target.value)}
+                          >
+                            {categoryList.map((category) => (
+                              <MenuItem
+                                sx={{
+                                  fontFamily: 'Mulish',
+                                }}
+                                key={category.id}
+                                value={category.id}
+                              >
+                                {category.name}
+                              </MenuItem>
+                            ))}
+                          </Select>
+                          {newInvalid && (newCategoryId?.length === 0 || !newCategoryId) && (
+                            <span style={{ color: 'red', fontFamily: 'Mulish', fontSize: '16px', margin: '3px 14px 0' }}>Vui lòng chọn danh mục</span>
+                          )}
+                        </FormControl>
+                      ) : (
+                        <>
+                          <Typography sx={{ fontFamily: 'Mulish', fontSize: '18px', fontWeight: 600, color: '#1a1a1a' }}>Danh mục:</Typography>
+                          <Typography sx={{ fontFamily: 'Mulish', fontSize: '18px', fontWeight: 700, color: '#936F48' }}>{item?.category?.name}</Typography>
+                        </>
+                      )}
                     </Box>
                     <Box sx={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap', gap: '4px' }}>
-                      <Typography sx={{ fontFamily: 'Mulish', fontSize: '18px', fontWeight: 600, color: '#1a1a1a' }}>Thời gian đăng bài:</Typography>
-                      <Typography sx={{ fontFamily: 'Mulish', fontSize: '18px', fontWeight: 700, color: '#936F48' }}>{formatDate(new Date(item?.publicTime ?? ''))}</Typography>
+                      {editIndex === index ? (
+                        <></>
+                      ) : (
+                        <>
+                          <Typography sx={{ fontFamily: 'Mulish', fontSize: '18px', fontWeight: 600, color: '#1a1a1a' }}>Thời gian đăng bài:</Typography>
+                          <Typography sx={{ fontFamily: 'Mulish', fontSize: '18px', fontWeight: 700, color: '#936F48' }}>{formatDate(new Date(item?.publicTime ?? ''))}</Typography>
+                        </>
+                      )}
                     </Box>
                   </Grid>
                   <Grid
@@ -669,7 +816,7 @@ export default function AdminArticle() {
                         <>
                           <Button
                             variant="contained"
-                            // onClick={() => handleUpdate(index)}
+                            onClick={() => handleUpdate(index)}
                             startIcon={<CheckCircleIcon sx={{ width: '16px', height: '16px' }} />}
                             sx={{ fontSize: '16', fontWeight: 600, backgroundColor: '#28BFDF  ', '&:hover': { backgroundColor: '#28BFDF ' } }}
                           >

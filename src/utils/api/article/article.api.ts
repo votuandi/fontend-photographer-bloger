@@ -1,7 +1,7 @@
 import commonAxios from '@/utils/axios/commom.axios'
 import formDataAxios from '@/utils/axios/form-data.axios'
 import type { AxiosResponseData } from '@/utils/axios'
-import { CREATE_ARTICLE_DTO } from './article.api.types'
+import { CREATE_ARTICLE_DTO, UPDATE_ARTICLE_DTO } from './article.api.types'
 
 const articleApi = {
   getList: () => {
@@ -14,11 +14,11 @@ const articleApi = {
     })
   },
 
-  // updateCategory: (id: string, payload: UPDATE_CATEGORY_DTO) => {
-  //   return commonAxios.put<AxiosResponseData>(`/categories/${id}`, {
-  //     ...payload.params,
-  //   })
-  // },
+  updateArticle: (id: string, payload: UPDATE_ARTICLE_DTO) => {
+    return commonAxios.put<AxiosResponseData>(`/articles/${id}`, {
+      ...payload.params,
+    })
+  },
 }
 
 export default articleApi
