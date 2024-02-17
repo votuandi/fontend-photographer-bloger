@@ -3,11 +3,8 @@ import { useEffect, useState } from 'react'
 import { useTranslation } from 'next-i18next'
 import { useRouter } from 'next/router'
 import { useIsMounted } from 'usehooks-ts'
-import Slider from 'react-slick'
 import useStyles from './AdminArticle.style'
 import { Box, Button, CircularProgress, FormControl, FormLabel, Grid, InputLabel, MenuItem, Select, Switch, TextField, Typography } from '@mui/material'
-import AppBanner from '@/components/AppBanner'
-import AppAdminMenu from '@/components/AppAdminMenu'
 import Head from 'next/head'
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline'
 import CheckCircleIcon from '@mui/icons-material/CheckCircle'
@@ -20,9 +17,13 @@ import { DemoContainer } from '@mui/x-date-pickers/internals/demo'
 import dayjs, { Dayjs } from 'dayjs'
 import { articleApi } from '@/utils/api'
 import { ARTICLE_ITEM_TYPE, UPDATE_ARTICLE_DTO } from '@/utils/api/article'
-import { formatDate } from '@/utils/helpers/common'
+import { formatDate, gotoPage } from '@/utils/helpers/common'
 import BorderColorIcon from '@mui/icons-material/BorderColor'
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline'
+import EditNoteIcon from '@mui/icons-material/EditNote'
+import LocalOfferOutlinedIcon from '@mui/icons-material/LocalOfferOutlined'
+import PhotoLibraryOutlinedIcon from '@mui/icons-material/PhotoLibraryOutlined'
+import EventAvailableOutlinedIcon from '@mui/icons-material/EventAvailableOutlined'
 
 export default function AdminArticle() {
   const { t, i18n } = useTranslation()
@@ -138,6 +139,10 @@ export default function AdminArticle() {
       }
       reader.readAsDataURL(selectedFile)
     }
+  }
+
+  let handleEditContent = (aid: string) => {
+    gotoPage(`/admin/article/${aid}`)
   }
 
   let GetCategoryList = async () => {
@@ -429,7 +434,7 @@ export default function AdminArticle() {
                   labelId="category-label"
                   id="category-select"
                   defaultValue=""
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNewCategoryId(e.target.value)}
+                  onChange={(e: any) => setNewCategoryId(e.target.value)}
                 >
                   {categoryList.map((category) => (
                     <MenuItem
@@ -551,6 +556,7 @@ export default function AdminArticle() {
                         maxHeight: '300px',
                         borderRadius: '8px',
                         display: 'flex',
+                        padding: '8px 4px',
                       },
                     }}
                   >
@@ -576,7 +582,7 @@ export default function AdminArticle() {
                       display: 'flex',
                       flexDirection: 'column',
                       gap: editIndex === index ? '10px' : '4px',
-                      padding: editIndex === index ? '8px 12px' : '0px 12px',
+                      padding: editIndex === index ? '8px 12px' : '4px 20px',
                     }}
                   >
                     {editIndex === index ? (
@@ -615,7 +621,7 @@ export default function AdminArticle() {
                       <Typography
                         sx={{
                           fontFamily: 'Mulish',
-                          fontSize: '28px',
+                          fontSize: '24px',
                           fontWeight: 700,
                           color: '#1a1a1a',
                         }}
@@ -662,11 +668,11 @@ export default function AdminArticle() {
                       <Typography
                         sx={{
                           fontFamily: 'Mulish',
-                          fontSize: '18px',
+                          fontSize: '16px',
                           fontWeight: 400,
                           color: '#1a1a1a',
                         }}
-                        className="text-2-line"
+                        className="text-3-line"
                       >
                         {item.shortDescription}
                       </Typography>
@@ -705,8 +711,8 @@ export default function AdminArticle() {
                     sx={{
                       display: 'flex',
                       flexDirection: 'column',
-                      gap: editIndex === index ? '16px' : '4px',
-                      padding: editIndex === index ? '8px 12px' : '0px 12px',
+                      gap: editIndex === index ? '16px' : '12px',
+                      padding: '8px 12px',
                     }}
                   >
                     <Box sx={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap', gap: '4px' }}>
@@ -734,9 +740,10 @@ export default function AdminArticle() {
                         />
                       ) : (
                         <>
-                          <Typography sx={{ fontFamily: 'Mulish', fontSize: '18px', fontWeight: 600, color: '#1a1a1a' }}>Hashtag:</Typography>
+                          {/* <Typography sx={{ fontFamily: 'Mulish', fontSize: '18px', fontWeight: 600, color: '#1a1a1a' }}>Hashtag:</Typography> */}
+                          <LocalOfferOutlinedIcon sx={{ color: '#0596A6', height: '20px' }} />
                           {item.hashtag.split(',').map((htag, htIndex) => (
-                            <Typography key={htIndex} sx={{ fontFamily: 'Mulish', fontSize: '18px', fontWeight: 700, color: '#1D2FAD' }}>
+                            <Typography key={htIndex} sx={{ fontFamily: 'Mulish', fontSize: '16px', fontWeight: 700, color: '#1D2FAD' }}>
                               #{htag}
                             </Typography>
                           ))}
@@ -766,7 +773,7 @@ export default function AdminArticle() {
                             labelId="category-label"
                             id="category-select"
                             defaultValue={editCategoryId}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEditCategoryId(e.target.value)}
+                            onChange={(e: any) => setEditCategoryId(e.target.value)}
                           >
                             {categoryList.map((category) => (
                               <MenuItem
@@ -786,8 +793,9 @@ export default function AdminArticle() {
                         </FormControl>
                       ) : (
                         <>
-                          <Typography sx={{ fontFamily: 'Mulish', fontSize: '18px', fontWeight: 600, color: '#1a1a1a' }}>Danh mục:</Typography>
-                          <Typography sx={{ fontFamily: 'Mulish', fontSize: '18px', fontWeight: 700, color: '#936F48' }}>{item?.category?.name}</Typography>
+                          {/* <Typography sx={{ fontFamily: 'Mulish', fontSize: '18px', fontWeight: 600, color: '#1a1a1a' }}>Danh mục:</Typography> */}
+                          <PhotoLibraryOutlinedIcon sx={{ color: '#0596A6', height: '20px' }} />
+                          <Typography sx={{ fontFamily: 'Mulish', fontSize: '16px', fontWeight: 700, color: '#936F48' }}>{item?.category?.name}</Typography>
                         </>
                       )}
                     </Box>
@@ -796,8 +804,9 @@ export default function AdminArticle() {
                         <></>
                       ) : (
                         <>
-                          <Typography sx={{ fontFamily: 'Mulish', fontSize: '18px', fontWeight: 600, color: '#1a1a1a' }}>Thời gian đăng bài:</Typography>
-                          <Typography sx={{ fontFamily: 'Mulish', fontSize: '18px', fontWeight: 700, color: '#936F48' }}>{formatDate(new Date(item?.publicTime ?? ''))}</Typography>
+                          {/* <Typography sx={{ fontFamily: 'Mulish', fontSize: '18px', fontWeight: 600, color: '#1a1a1a' }}>Thời gian đăng bài:</Typography> */}
+                          <EventAvailableOutlinedIcon sx={{ color: '#0596A6', height: '20px' }} />
+                          <Typography sx={{ fontFamily: 'Mulish', fontSize: '16px', fontWeight: 700, color: '#936F48' }}>{formatDate(new Date(item?.publicTime ?? ''))}</Typography>
                         </>
                       )}
                     </Box>
@@ -825,6 +834,21 @@ export default function AdminArticle() {
                       <FormLabel>Kích hoạt: </FormLabel>
                       <Switch checked={item?.active}></Switch>
                     </FormControl>
+                    <Button
+                      variant="contained"
+                      onClick={() => handleEditContent(item.id)}
+                      startIcon={<EditNoteIcon sx={{ width: '16px', height: '16px' }} />}
+                      disabled={editIndex === index}
+                      sx={{
+                        fontSize: '16',
+                        fontWeight: 600,
+                        fontFamily: 'Mulish',
+                        backgroundColor: editIndex === index ? '#999' : '#DBB070',
+                        '&:hover': { backgroundColor: editIndex === index ? '#999' : '#AF7337' },
+                      }}
+                    >
+                      Soạn thảo
+                    </Button>
                     <Box
                       sx={{
                         color: '#1a1a1a',

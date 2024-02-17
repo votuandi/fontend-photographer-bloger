@@ -8,6 +8,10 @@ const articleApi = {
     return commonAxios.get<AxiosResponseData>('/articles')
   },
 
+  getById: (id: string) => {
+    return commonAxios.get<AxiosResponseData>(`/articles/${id}`)
+  },
+
   createArticle: (payload: CREATE_ARTICLE_DTO) => {
     return formDataAxios.post<AxiosResponseData>('/articles/', {
       ...payload.params,

@@ -2,10 +2,6 @@ import { Suspense } from 'react'
 import dynamic from 'next/dynamic'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 
-import { newsApi } from '@/utils/api'
-import { commonHelpers } from '@/utils/helpers'
-import { commonConfig } from '@/utils/configs'
-
 import LayoutMain from '@/layouts/Main'
 import LayoutCoreProvider from '@/layouts/CoreProvider'
 
