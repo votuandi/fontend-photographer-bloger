@@ -1,3 +1,4 @@
+import { ARTICLE_CONTENT_TYPES, ARTICLE_CONTENT_WIDTHS } from '@/types/common'
 import { ARTICLE_ITEM_TYPE } from '../article/article.api.types'
 
 export type GET_CONTENTS_BY_ARTICLE_ID_PAYLOAD = {
@@ -13,6 +14,17 @@ export type ARTICLE_CONTENT_ITEM_TYPE = {
   content: string
   width: string
   article: ARTICLE_ITEM_TYPE
+}
+
+export type CREATE_ARTICLE_CONTENT_DTO = {
+  params: {
+    previous: string
+    type: ARTICLE_CONTENT_TYPES
+    width: ARTICLE_CONTENT_WIDTHS
+    content: string
+    articleId: string
+    image: File | null
+  }
 }
 
 // export type GET_ARTICLE_LIST_RESPONSE = ARTICLE_ITEM_TYPE[]

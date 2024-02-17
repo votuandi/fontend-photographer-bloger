@@ -18,16 +18,83 @@ import { formatDate } from '@/utils/helpers/common'
 import { ARTICLE_CONTENT_ITEM_TYPE } from '@/utils/api/articleContent'
 import { articleContentApi } from '@/utils/api'
 import parse from 'html-react-parser'
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline'
+import { ARTICLE_CONTENT_TYPES, ARTICLE_CONTENT_WIDTHS } from '@/types/common'
+import { ARTICLE_CONTENT_LIST, ARTICLE_CONTENT_WIDTH_LIST, QUILL_FORMAT, QUILL_MODULES } from '@/utils/constants/common.constant'
+import CheckCircleIcon from '@mui/icons-material/CheckCircle'
+import CancelIcon from '@mui/icons-material/Cancel'
+import ReactQuill from 'react-quill'
+import 'react-quill/dist/quill.snow.css'
 
 export default function AdminArticleContent() {
   const { t, i18n } = useTranslation()
   const locale = i18n.language
   const router = useRouter()
 
+  const [isShowNewPopup, setIsShowNewPopup] = useState<boolean>(false)
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [articleId, setArticleId] = useState<string>('')
   const [article, setArticle] = useState<ARTICLE_ITEM_TYPE>()
   const [contentList, setContentList] = useState<ARTICLE_CONTENT_ITEM_TYPE[]>([])
+  const [sortedContentList, setSortedContentList] = useState<ARTICLE_CONTENT_ITEM_TYPE[]>([])
+  const [newPrevious, setNewPrevious] = useState<string>('')
+  const [newType, setNewType] = useState<ARTICLE_CONTENT_TYPES>('text')
+  const [newWidth, setNewWidth] = useState<ARTICLE_CONTENT_WIDTHS>('1200px')
+  const [newContentContent, setNewContentContent] = useState<string>('')
+  const [newFile, setNewFile] = useState<File | null>(null)
+  const [newImagePreview, setNewImagePreview] = useState<string | null>(null)
+
+  let handleNewEvent = () => {
+    setIsShowNewPopup(true)
+    setNewPrevious(sortedContentList.length > 0 ? sortedContentList[sortedContentList.length - 1].id : '')
+    setNewType('text')
+    setNewWidth('1200px')
+    setNewContentContent('')
+    setNewFile(null)
+    setNewImagePreview(null)
+  }
+
+  let handleNewFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      const selectedFile = e.target.files[0]
+      setNewFile(selectedFile)
+
+      // Preview the selected image
+      const reader = new FileReader()
+      reader.onload = () => {
+        setNewImagePreview(reader.result as string)
+      }
+      reader.readAsDataURL(selectedFile)
+    }
+  }
+
+  let CreateArticleContent = async () => {
+    try {
+      setIsLoading(true)
+      let res = await articleContentApi.createContent({
+        params: {
+          previous: newPrevious,
+          type: newType,
+          width: newWidth,
+          content: newContentContent,
+          articleId: articleId,
+          image: newFile,
+        },
+      })
+      if (res.data.status) {
+        alert('Create new article content successfully!')
+        await GetContentsByArticleId()
+        setIsLoading(false)
+        setIsShowNewPopup(false)
+      } else {
+        alert(`Create new article content failed!\n${res.data.message}`)
+        setIsLoading(false)
+        setIsShowNewPopup(false)
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
   let GetArticle = async (_aid?: string) => {
     let aid: string = _aid ? _aid : articleId
@@ -47,10 +114,28 @@ export default function AdminArticleContent() {
       let res = await articleContentApi.getListByArticleId(aid)
       if (res.data.status) {
         setContentList(res.data.params)
+        let sortedList = sortContentList(res.data.params)
+        setSortedContentList(sortedList)
       }
     } catch (error) {
       console.log(error)
     }
+  }
+
+  let sortContentList = (cList: ARTICLE_CONTENT_ITEM_TYPE[]) => {
+    let sortedList: ARTICLE_CONTENT_ITEM_TYPE[] = []
+    if (cList.length === 0) return []
+    let item = cList.find((c) => c.previous === null)
+    if (!item) return []
+    sortedList.push(item)
+    cList = cList.filter((c) => c.previous !== null)
+    while (cList.length > 0) {
+      item = cList.find((c) => c.previous === sortedList[sortedList.length - 1].id)
+      if (!item) return sortedList
+      sortedList.push(item)
+      cList = cList.filter((c) => c.id !== sortedList[sortedList.length - 1].id)
+    }
+    return sortedList
   }
 
   let FetchData = async (aid?: string) => {
@@ -73,6 +158,10 @@ export default function AdminArticleContent() {
     if (!isMounted()) return
     FetchData()
   }, [locale])
+
+  useEffect(() => {
+    console.log(newContentContent)
+  }, [newContentContent])
 
   const { classes } = useStyles({ params: {} })
   let isMounted = useIsMounted()
@@ -212,8 +301,8 @@ export default function AdminArticleContent() {
               mt: '20px',
             }}
           >
-            {Array.isArray(contentList) &&
-              contentList.map((aContent, index) => (
+            {Array.isArray(sortedContentList) &&
+              sortedContentList.map((aContent, index) => (
                 <Box
                   key={index}
                   sx={{
@@ -296,11 +385,173 @@ export default function AdminArticleContent() {
                     >
                       {parse(aContent.content)}
                     </Typography>
+                  ) : aContent.type === 'image' ? (
+                    <Box sx={{ width: '100%', '& img': { width: '100%' } }}>
+                      <img src={aContent.content} alt="" />
+                    </Box>
                   ) : (
                     <></>
                   )}
                 </Box>
               ))}
+            <Button
+              startIcon={<AddCircleOutlineIcon sx={{ color: '#fff' }} />}
+              sx={{
+                backgroundColor: '#DBB070',
+                padding: '12px ',
+                fontFamily: 'Mulish',
+                fontWeight: 600,
+                fontSize: '16px',
+                color: '#fff',
+                width: 'fit-content',
+                mx: 'auto',
+                mt: '12px',
+                '&:hover': { backgroundColor: '#B7905C' },
+              }}
+              onClick={handleNewEvent}
+            >
+              Thêm nội dung
+            </Button>
+            {isShowNewPopup && (
+              <Box
+                sx={{
+                  width: '100%',
+                  borderRadius: '8px',
+                  margin: '-24px 0 0 auto',
+                  padding: '12px 18px',
+                  fontFamily: 'Mulish',
+                  boxShadow: 2,
+                  gap: '16px',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  backgroundColor: '#0596A610',
+                }}
+              >
+                <Typography
+                  sx={{
+                    fontSize: '18px',
+                    fontWeight: 700,
+                    color: '#0596A6',
+                  }}
+                >
+                  Tạo nội dung mới
+                </Typography>
+                <Grid container>
+                  <Grid item xs={6} sx={{ pr: '4px' }}>
+                    <FormControl fullWidth>
+                      <InputLabel
+                        sx={{
+                          color: '#0596A6',
+                          backgroundColor: '#fff',
+                        }}
+                      >
+                        Chọn loại nội dung
+                      </InputLabel>
+                      <Select
+                        sx={{
+                          backgroundColor: '#fff',
+                          '& .MuiFormHelperText-root': {
+                            backgroundColor: 'transparent',
+                            color: 'red',
+                          },
+                        }}
+                        labelId="type-label"
+                        id="type-select"
+                        defaultValue="text"
+                        onChange={(e: any) => setNewType(e.target.value)}
+                      >
+                        {ARTICLE_CONTENT_LIST.map((aItem, aInd) => (
+                          <MenuItem
+                            sx={{
+                              fontFamily: 'Mulish',
+                            }}
+                            key={aInd}
+                            value={aItem}
+                          >
+                            {aItem}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    </FormControl>
+                  </Grid>
+                  <Grid item xs={6} sx={{ pl: '4px' }}>
+                    <FormControl fullWidth>
+                      <InputLabel
+                        sx={{
+                          color: '#0596A6',
+                          backgroundColor: '#fff',
+                        }}
+                      >
+                        Chọn kích thước
+                      </InputLabel>
+                      <Select
+                        sx={{
+                          backgroundColor: '#fff',
+                          '& .MuiFormHelperText-root': {
+                            backgroundColor: 'transparent',
+                            color: 'red',
+                          },
+                        }}
+                        labelId="width-label"
+                        id="width-select"
+                        defaultValue="1200px"
+                        onChange={(e: any) => setNewWidth(e.target.value)}
+                      >
+                        {ARTICLE_CONTENT_WIDTH_LIST.map((aItem, aInd) => (
+                          <MenuItem
+                            sx={{
+                              fontFamily: 'Mulish',
+                            }}
+                            key={aInd}
+                            value={aItem}
+                          >
+                            {aItem}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    </FormControl>
+                  </Grid>
+                </Grid>
+                {newType === 'text' && (
+                  <Box sx={{ width: '100%', backgroundColor: '#fff', color: '#000' }}>
+                    <ReactQuill theme="snow" modules={QUILL_MODULES} formats={QUILL_FORMAT} value={newContentContent} onChange={(value: any) => setNewContentContent(value)} />
+                  </Box>
+                )}
+
+                {newType === 'image' && (
+                  <>
+                    <input type="file" accept="image/*" onChange={handleNewFileChange} style={{ display: 'none' }} id="upload-image" />
+                    <label htmlFor="upload-image">
+                      <Button variant="contained" component="span">
+                        Chọn ảnh
+                      </Button>
+                    </label>
+                    {newImagePreview && <img src={newImagePreview} alt="Selected" style={{ marginTop: '10px', maxWidth: '100%' }} />}
+                    {newFile && <Typography sx={{ color: '#1a1a1a' }}>{newFile.name}</Typography>}
+                  </>
+                )}
+
+                <Box sx={{ display: 'flex', flexDirection: 'row', gap: '8px', marginLeft: 'auto' }}>
+                  <Button
+                    variant="contained"
+                    onClick={CreateArticleContent}
+                    startIcon={<CheckCircleIcon sx={{ width: '16px', height: '16px' }} />}
+                    sx={{ fontSize: '16', fontWeight: 600, backgroundColor: '#28BFDF  ', '&:hover': { backgroundColor: '#28BFDF ' } }}
+                  >
+                    OK
+                  </Button>
+                  <Button
+                    onClick={() => setIsShowNewPopup(false)}
+                    variant="contained"
+                    color="warning"
+                    startIcon={<CancelIcon sx={{ width: '16px', height: '16px' }} />}
+                    sx={{ fontSize: '16', fontWeight: 600 }}
+                  >
+                    Cancel
+                  </Button>
+                </Box>
+              </Box>
+            )}
           </Box>
           {isLoading && (
             <Box
