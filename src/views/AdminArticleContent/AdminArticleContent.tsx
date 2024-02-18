@@ -14,7 +14,7 @@ import PhotoLibraryOutlinedIcon from '@mui/icons-material/PhotoLibraryOutlined'
 import EventAvailableOutlinedIcon from '@mui/icons-material/EventAvailableOutlined'
 import AspectRatioOutlinedIcon from '@mui/icons-material/AspectRatioOutlined'
 import FilePresentIcon from '@mui/icons-material/FilePresent'
-import { formatDate } from '@/utils/helpers/common'
+import { convertToEmbed, convertToEmbedPreview, formatDate } from '@/utils/helpers/common'
 import { ARTICLE_CONTENT_ITEM_TYPE } from '@/utils/api/articleContent'
 import { articleContentApi } from '@/utils/api'
 import parse from 'html-react-parser'
@@ -25,6 +25,8 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle'
 import CancelIcon from '@mui/icons-material/Cancel'
 import ReactQuill from 'react-quill'
 import 'react-quill/dist/quill.snow.css'
+import VisibilityIcon from '@mui/icons-material/Visibility'
+import CloseIcon from '@mui/icons-material/Close'
 
 export default function AdminArticleContent() {
   const { t, i18n } = useTranslation()
@@ -43,6 +45,7 @@ export default function AdminArticleContent() {
   const [newContentContent, setNewContentContent] = useState<string>('')
   const [newFile, setNewFile] = useState<File | null>(null)
   const [newImagePreview, setNewImagePreview] = useState<string | null>(null)
+  const [isShowPreview, setIsShowPreview] = useState<boolean>(false)
 
   let handleNewEvent = () => {
     setIsShowNewPopup(true)
@@ -389,6 +392,8 @@ export default function AdminArticleContent() {
                     <Box sx={{ width: '100%', '& img': { width: '100%' } }}>
                       <img src={aContent.content} alt="" />
                     </Box>
+                  ) : aContent.type === 'youtube' ? (
+                    <Box sx={{ width: '100%' }}>{parse(convertToEmbedPreview(aContent.content ?? '') ?? '')}</Box>
                   ) : (
                     <></>
                   )}
@@ -417,7 +422,7 @@ export default function AdminArticleContent() {
                 sx={{
                   width: '100%',
                   borderRadius: '8px',
-                  margin: '-24px 0 0 auto',
+                  margin: '4px 0 0 auto',
                   padding: '12px 18px',
                   fontFamily: 'Mulish',
                   boxShadow: 2,
@@ -531,6 +536,40 @@ export default function AdminArticleContent() {
                   </>
                 )}
 
+                {newType === 'youtube' && (
+                  <>
+                    <TextField
+                      id="new-youtube"
+                      label="Nhập link youtube"
+                      variant="outlined"
+                      fullWidth
+                      sx={{
+                        borderRadius: '12px',
+                        color: '#0596A6',
+
+                        '& fieldset': {
+                          borderColor: '#0596A6',
+                          backgroundColor: '#fff',
+                        },
+
+                        '& .MuiFormLabel-root': {
+                          color: '#0596A6',
+                        },
+
+                        '& .MuiFormHelperText-root': {
+                          backgroundColor: 'transparent',
+                          color: 'red',
+                        },
+                        '& input': {
+                          zIndex: 1,
+                        },
+                      }}
+                      value={newContentContent}
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNewContentContent(e.target.value)}
+                    />
+                    {parse(convertToEmbedPreview(newContentContent ?? '') ?? '')}
+                  </>
+                )}
                 <Box sx={{ display: 'flex', flexDirection: 'row', gap: '8px', marginLeft: 'auto' }}>
                   <Button
                     variant="contained"
@@ -553,6 +592,174 @@ export default function AdminArticleContent() {
               </Box>
             )}
           </Box>
+          <Box
+            sx={{
+              height: '48px',
+              width: '48px',
+              position: 'fixed',
+              bottom: '30px',
+              right: '30px',
+              borderRadius: '50%',
+              border: '1px solid #1a1a1a',
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              backgroundColor: '#fff',
+              boxShadow: 2,
+              cursor: 'pointer',
+              zIndex: 89,
+            }}
+            onClick={() => setIsShowPreview(true)}
+          >
+            <VisibilityIcon sx={{ color: '#1a1a1a' }} />
+          </Box>
+          {isShowPreview && (
+            <Box
+              sx={{
+                background: '#00000055',
+                width: '100vw',
+                height: '100vh',
+                position: 'fixed',
+                bottom: 0,
+                left: 0,
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'end',
+                zIndex: 90,
+              }}
+            >
+              <Box
+                sx={{
+                  backgroundColor: '#fff',
+                  borderTopRightRadius: '20px',
+                  borderTopLeftRadius: '20px',
+                  height: '99vh',
+                  width: '100vw',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'start',
+                  alignItems: 'center',
+                  overflow: 'auto',
+                }}
+                className="slideInUp"
+              >
+                <Box
+                  sx={{
+                    margin: '8px 16px 8px auto',
+                    cursor: 'pointer',
+                  }}
+                  onClick={() => setIsShowPreview(false)}
+                >
+                  <CloseIcon sx={{ color: '#000', height: '24px' }} />
+                </Box>
+                <Typography
+                  sx={{
+                    fontFamily: 'Mulish',
+                    color: '#1a1a1a',
+                    fontWeight: 800,
+                    fontSize: '36px',
+                    mx: 'auto',
+                    width: '100%',
+                    maxWidth: '1200px',
+                    textAlign: 'center',
+                  }}
+                >
+                  {article?.title}
+                </Typography>
+                <Box
+                  sx={{
+                    width: '100%',
+                    maxWidth: '1200px',
+                    display: 'flex',
+                    flexDirection: 'row',
+                    justifyContent: 'end',
+                    flexWrap: 'wrap',
+                    gap: '8px',
+                    mt: '8px',
+                  }}
+                >
+                  <Box
+                    sx={{
+                      width: 'fit-content',
+                      display: 'flex',
+                      flexDirection: 'row',
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      gap: '2px',
+                    }}
+                  >
+                    <PhotoLibraryOutlinedIcon sx={{ color: '#1a1a1a', height: '14px' }} />
+                    <Typography
+                      sx={{
+                        fontFamily: 'Mulish',
+                        color: '#999',
+                        fontWeight: 400,
+                        fontSize: '12px',
+                        width: '100%',
+                        textAlign: 'justify',
+                      }}
+                    >
+                      {article?.category?.name}
+                    </Typography>
+                  </Box>
+                  <Box
+                    sx={{
+                      width: 'fit-content',
+                      display: 'flex',
+                      flexDirection: 'row',
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      gap: '2px',
+                    }}
+                  >
+                    <EventAvailableOutlinedIcon sx={{ color: '#1a1a1a', height: '14px' }} />
+                    <Typography
+                      sx={{
+                        fontFamily: 'Mulish',
+                        color: '#999',
+                        fontWeight: 400,
+                        fontSize: '12px',
+                        width: '100%',
+                        textAlign: 'justify',
+                      }}
+                    >
+                      {article?.publicTime ? formatDate(new Date(article.publicTime)) : ''}
+                    </Typography>
+                  </Box>
+                </Box>
+                <Box
+                  sx={{
+                    width: '100%',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'start',
+                    alignItems: 'center',
+                  }}
+                >
+                  {sortedContentList.map((contentItem, cIndex) => (
+                    <Box
+                      key={cIndex}
+                      sx={{
+                        width: contentItem.width,
+                      }}
+                    >
+                      {contentItem.type === 'text' ? (
+                        <>{parse(contentItem.content)}</>
+                      ) : contentItem.type === 'image' ? (
+                        <>
+                          <img style={{ width: '100%' }} src={contentItem.content} alt="" />
+                        </>
+                      ) : contentItem.type === 'youtube' ? (
+                        <>{parse(convertToEmbed(contentItem.content ?? '', contentItem.width) ?? '')}</>
+                      ) : (
+                        <></>
+                      )}
+                    </Box>
+                  ))}
+                </Box>
+              </Box>
+            </Box>
+          )}
           {isLoading && (
             <Box
               sx={{

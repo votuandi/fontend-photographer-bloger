@@ -164,3 +164,34 @@ export const formatDate = (date: Date): string => {
 
   return `${day}/${month}/${year} ${hours}:${minutes}`
 }
+
+export const convertToEmbed = (url: string, width: string): string | null => {
+  // Regular expression to extract YouTube video ID
+  const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/
+  const match = url.match(regExp)
+  const height = width === '100%' ? Math.round((window.innerWidth * 9) / 16) : Math.round((parseInt(width.slice(0, -2)) * 9) / 16)
+  if (match && match[2].length === 11) {
+    // If match found and video ID extracted
+    const videoId = match[2]
+    // Construct and return the embed code
+    return `<iframe width="${width}" height="${height}" src="https://www.youtube.com/embed/${videoId}" frameborder="0" allowfullscreen></iframe>`
+  } else {
+    // If URL is not a valid YouTube URL
+    return null
+  }
+}
+
+export const convertToEmbedPreview = (url: string): string | null => {
+  // Regular expression to extract YouTube video ID
+  const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/
+  const match = url.match(regExp)
+  if (match && match[2].length === 11) {
+    // If match found and video ID extracted
+    const videoId = match[2]
+    // Construct and return the embed code
+    return `<iframe width="100%" height="${Math.round((window.innerWidth * 9) / 16)}" src="https://www.youtube.com/embed/${videoId}" frameborder="0" allowfullscreen></iframe>`
+  } else {
+    // If URL is not a valid YouTube URL
+    return null
+  }
+}
