@@ -8,9 +8,9 @@ const articleApi = {
     return commonAxios.get<AxiosResponseData>(`/article-contents/article/${aid}`)
   },
 
-  // getById: (id: string) => {
-  //   return commonAxios.get<AxiosResponseData>(`/articles/${id}`)
-  // },
+  getById: (id: string) => {
+    return commonAxios.get<AxiosResponseData>(`/article-contents/${id}`)
+  },
 
   createContent: (payload: CREATE_ARTICLE_CONTENT_DTO) => {
     return formDataAxios.post<AxiosResponseData>('/article-contents/', {
@@ -19,11 +19,13 @@ const articleApi = {
   },
 
   updateContent: (id: string, payload: UPDATE_ARTICLE_CONTENT_DTO) => {
-    console.log('PAYLOAD', payload)
-
     return formDataAxios.put<AxiosResponseData>(`/article-contents/${id}`, {
       ...payload.params,
     })
+  },
+
+  deleteById: (id: string) => {
+    return commonAxios.delete<AxiosResponseData>(`/article-contents/${id}`)
   },
 }
 

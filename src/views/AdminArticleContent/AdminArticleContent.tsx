@@ -86,16 +86,38 @@ export default function AdminArticleContent() {
         type: editType,
         content: editContentContent,
         width: editWidth,
+        articleId: articleId ?? sortedContentList[index].id,
       },
     }
     await UpdateContent(sortedContentList[index].id, updateArticleContentDto)
   }
 
+  let handleDeleteEvent = async (index: number) => {
+    if (confirm('Xác nhận xóa nội dung')) await DeleteContent(sortedContentList[index].id)
+  }
+
+  let DeleteContent = async (id: string) => {
+    try {
+      setIsLoading(true)
+      let res = await articleContentApi.deleteById(id)
+      if (res.data.status) {
+        alert(`Delete successfully!`)
+        await GetContentsByArticleId()
+        setEditIndex(-1)
+        setIsLoading(false)
+      } else {
+        alert(`Update failed!\n${res.data.message}`)
+        setIsLoading(false)
+      }
+    } catch (error) {
+      console.log(error)
+      setIsLoading(false)
+    }
+  }
+
   let UpdateContent = async (id: string, updateArticleContentDto: UPDATE_ARTICLE_CONTENT_DTO) => {
     try {
       setIsLoading(true)
-      console.log(updateArticleContentDto.params)
-
       let res = await articleContentApi.updateContent(id, updateArticleContentDto)
       if (res.data.status) {
         await GetContentsByArticleId()
@@ -398,36 +420,37 @@ export default function AdminArticleContent() {
                       },
                     }}
                   >
-                    <Box
-                      sx={{
-                        position: 'absolute',
-                        top: '8px',
-                        right: '8px',
-                        display: 'flex',
-                        flexDirection: 'row',
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        gap: '8px',
-                      }}
-                    >
-                      <Button
-                        variant="contained"
-                        onClick={() => handleUpdate(index)}
-                        startIcon={<CheckCircleIcon sx={{ width: '16px', height: '16px' }} />}
-                        sx={{ fontSize: '16', fontWeight: 600, backgroundColor: '#28BFDF  ', '&:hover': { backgroundColor: '#28BFDF ' } }}
+                    {editIndex !== index && (
+                      <Box
+                        sx={{
+                          position: 'absolute',
+                          top: '8px',
+                          right: '8px',
+                          display: 'flex',
+                          flexDirection: 'row',
+                          justifyContent: 'center',
+                          alignItems: 'center',
+                          gap: '8px',
+                        }}
                       >
-                        OK
-                      </Button>
-                      <Button
-                        variant="contained"
-                        onClick={() => setEditIndex(-1)}
-                        color="warning"
-                        startIcon={<CancelIcon sx={{ width: '16px', height: '16px' }} />}
-                        sx={{ fontSize: '16', fontWeight: 600 }}
-                      >
-                        Cancel
-                      </Button>
-                    </Box>
+                        <Button
+                          variant="contained"
+                          onClick={() => handleEditEvent(index)}
+                          startIcon={<BorderColorIcon sx={{ width: '16px', height: '16px' }} />}
+                          sx={{ fontSize: '16', fontWeight: 600, backgroundColor: '#93B775', '&:hover': { backgroundColor: '#7F9C20  ' } }}
+                        >
+                          Sửa
+                        </Button>
+                        <Button
+                          variant="contained"
+                          onClick={() => handleDeleteEvent(index)}
+                          startIcon={<DeleteOutlineIcon sx={{ width: '16px', height: '16px' }} />}
+                          sx={{ fontSize: '16', fontWeight: 600, backgroundColor: '#fa4653', '&:hover': { backgroundColor: '#c53b42  ' } }}
+                        >
+                          Xóa
+                        </Button>
+                      </Box>
+                    )}
                     <Box
                       sx={{
                         display: 'flex',

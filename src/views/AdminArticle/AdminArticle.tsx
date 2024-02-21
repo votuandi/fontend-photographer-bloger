@@ -94,6 +94,29 @@ export default function AdminArticle() {
     setUpdateThumbnailPreview(articleList[index]?.thumbnail)
   }
 
+  let handleDeleteEvent = async (index: number) => {
+    if (confirm('Xác nhận xóa nội dung')) await DeleteArticle(articleList[index].id)
+  }
+
+  let DeleteArticle = async (id: string) => {
+    try {
+      setIsLoading(true)
+      let res = await articleApi.deleteById(id)
+      if (res.data.status) {
+        alert(`Delete successfully!`)
+        await GetArticleList()
+        setEditIndex(-1)
+        setIsLoading(false)
+      } else {
+        alert(`Update failed!\n${res.data.message}`)
+        setIsLoading(false)
+      }
+    } catch (error) {
+      console.log(error)
+      setIsLoading(false)
+    }
+  }
+
   let handleUpdate = async (index: number) => {
     if (editTitle.length === 0 || editShortDescription.length === 0) {
       alert('Tiêu đề và trích dẫn không được để trống!')
@@ -900,6 +923,7 @@ export default function AdminArticle() {
                           </Button>
                           <Button
                             variant="contained"
+                            onClick={() => handleDeleteEvent(index)}
                             startIcon={<DeleteOutlineIcon sx={{ width: '16px', height: '16px' }} />}
                             sx={{ fontSize: '16', fontWeight: 600, backgroundColor: '#fa4653', '&:hover': { backgroundColor: '#c53b42  ' } }}
                           >

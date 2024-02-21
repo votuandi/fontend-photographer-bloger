@@ -8,6 +8,10 @@ const categoryApi = {
     return commonAxios.get<AxiosResponseData>('/categories')
   },
 
+  getById: (id: string) => {
+    return commonAxios.get<AxiosResponseData>(`/categories/${id}`)
+  },
+
   createCategory: (payload: CREATE_CATEGORY_DTO) => {
     return formDataAxios.post<AxiosResponseData>('/categories/', {
       ...payload.params,
@@ -18,6 +22,10 @@ const categoryApi = {
     return formDataAxios.put<AxiosResponseData>(`/categories/${id}`, {
       ...payload.params,
     })
+  },
+
+  deleteById: (id: string) => {
+    return commonAxios.delete<AxiosResponseData>(`/categories/${id}`)
   },
 }
 

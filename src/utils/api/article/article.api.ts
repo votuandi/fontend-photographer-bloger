@@ -25,6 +25,10 @@ const articleApi = {
       ...payload.params,
     })
   },
+
+  deleteById: (id: string) => {
+    return commonAxios.delete<AxiosResponseData>(`/articles/${id}`)
+  },
 }
 
 export default articleApi

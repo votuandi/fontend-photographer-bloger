@@ -76,6 +76,29 @@ export default function AdminCategory() {
     }
   }
 
+  let handleDeleteEvent = async (index: number) => {
+    if (confirm('Xác nhận xóa nội dung')) await DeleteCategory(categoryList[index].id)
+  }
+
+  let DeleteCategory = async (id: string) => {
+    try {
+      setIsLoading(true)
+      let res = await categoryApi.deleteById(id)
+      if (res.data.status) {
+        alert(`Delete successfully!`)
+        await GetCategoryList()
+        setEditIndex(-1)
+        setIsLoading(false)
+      } else {
+        alert(`Update failed!\n${res.data.message}`)
+        setIsLoading(false)
+      }
+    } catch (error) {
+      console.log(error)
+      setIsLoading(false)
+    }
+  }
+
   let GetCategoryList = async () => {
     try {
       let res = await categoryApi.getList()
@@ -605,6 +628,7 @@ export default function AdminCategory() {
                       </Button>
                       <Button
                         variant="contained"
+                        onClick={() => handleDeleteEvent(index)}
                         startIcon={<DeleteOutlineIcon sx={{ width: '16px', height: '16px' }} />}
                         sx={{ fontSize: '16', fontWeight: 600, backgroundColor: '#fa4653', '&:hover': { backgroundColor: '#c53b42  ' } }}
                       >
