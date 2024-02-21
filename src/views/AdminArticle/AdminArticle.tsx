@@ -81,7 +81,7 @@ export default function AdminArticle() {
 
   let handleEditEvent = (index: number, isActive: boolean) => {
     if (editIndex != -1) {
-      if (!confirm('Bạn đang chỉnh sửa 1 Danh mục khác và chưa lưu. Xác nhận thay đổi Danh mục cần chỉnh sửa?')) return
+      if (!confirm('Bạn đang chỉnh sửa 1 Bài viết khác và chưa lưu. Xác nhận thay đổi Bài viết cần chỉnh sửa?')) return
     }
     setEditIndex(index)
     setEditTitle(articleList[index].title)
@@ -832,7 +832,11 @@ export default function AdminArticle() {
                       }}
                     >
                       <FormLabel>Kích hoạt: </FormLabel>
-                      <Switch checked={item?.active}></Switch>
+                      {editIndex === index ? (
+                        <Switch checked={editActive} onClick={() => setEditActive((x) => !x)}></Switch>
+                      ) : (
+                        <Switch disabled checked={item.active} onChange={() => setEditActive((x) => !x)} />
+                      )}
                     </FormControl>
                     <Button
                       variant="contained"

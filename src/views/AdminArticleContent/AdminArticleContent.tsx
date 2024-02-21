@@ -15,7 +15,7 @@ import EventAvailableOutlinedIcon from '@mui/icons-material/EventAvailableOutlin
 import AspectRatioOutlinedIcon from '@mui/icons-material/AspectRatioOutlined'
 import FilePresentIcon from '@mui/icons-material/FilePresent'
 import { convertToEmbed, convertToEmbedPreview, formatDate } from '@/utils/helpers/common'
-import { ARTICLE_CONTENT_ITEM_TYPE } from '@/utils/api/articleContent'
+import { ARTICLE_CONTENT_ITEM_TYPE, UPDATE_ARTICLE_CONTENT_DTO } from '@/utils/api/articleContent'
 import { articleContentApi } from '@/utils/api'
 import parse from 'html-react-parser'
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline'
@@ -28,6 +28,8 @@ import 'react-quill/dist/quill.snow.css'
 import VisibilityIcon from '@mui/icons-material/Visibility'
 import CloseIcon from '@mui/icons-material/Close'
 
+import BorderColorIcon from '@mui/icons-material/BorderColor'
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline'
 export default function AdminArticleContent() {
   const { t, i18n } = useTranslation()
   const locale = i18n.language
@@ -46,6 +48,13 @@ export default function AdminArticleContent() {
   const [newFile, setNewFile] = useState<File | null>(null)
   const [newImagePreview, setNewImagePreview] = useState<string | null>(null)
   const [isShowPreview, setIsShowPreview] = useState<boolean>(false)
+  const [editIndex, setEditIndex] = useState<number>(-1)
+  const [editPrevious, setEditPrevious] = useState<string>('')
+  const [editType, setEditType] = useState<ARTICLE_CONTENT_TYPES>('text')
+  const [editWidth, setEditWidth] = useState<ARTICLE_CONTENT_WIDTHS>('1200px')
+  const [editContentContent, setEditContentContent] = useState<string>('')
+  const [updateFile, setUpdateFile] = useState<File | null>(null)
+  const [updateImagePreview, setUpdateImagePreview] = useState<string | null>(null)
 
   let handleNewEvent = () => {
     setIsShowNewPopup(true)
@@ -57,6 +66,51 @@ export default function AdminArticleContent() {
     setNewImagePreview(null)
   }
 
+  let handleEditEvent = (index: number) => {
+    if (editIndex != -1) {
+      if (!confirm('Bạn đang chỉnh sửa 1 Nội dung khác và chưa lưu. Xác nhận thay đổi Nội dung cần chỉnh sửa?')) return
+    }
+    setEditIndex(index)
+    setEditPrevious(sortedContentList[index].previous ?? '')
+    setEditType(sortedContentList[index].type as ARTICLE_CONTENT_TYPES)
+    setEditWidth(sortedContentList[index].width as ARTICLE_CONTENT_WIDTHS)
+    setEditContentContent(sortedContentList[index].content)
+    setUpdateFile(null)
+    setUpdateImagePreview(sortedContentList[index].type === 'image' ? sortedContentList[index]?.content : null)
+  }
+
+  let handleUpdate = async (index: number) => {
+    let updateArticleContentDto: UPDATE_ARTICLE_CONTENT_DTO = {
+      params: {
+        previous: editPrevious,
+        type: editType,
+        content: editContentContent,
+        width: editWidth,
+      },
+    }
+    await UpdateContent(sortedContentList[index].id, updateArticleContentDto)
+  }
+
+  let UpdateContent = async (id: string, updateArticleContentDto: UPDATE_ARTICLE_CONTENT_DTO) => {
+    try {
+      setIsLoading(true)
+      console.log(updateArticleContentDto.params)
+
+      let res = await articleContentApi.updateContent(id, updateArticleContentDto)
+      if (res.data.status) {
+        await GetContentsByArticleId()
+        setEditIndex(-1)
+        setIsLoading(false)
+      } else {
+        alert(`Update failed!\n${res.data.message}`)
+        setIsLoading(false)
+      }
+    } catch (error) {
+      console.log(error)
+      setIsLoading(false)
+    }
+  }
+
   let handleNewFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       const selectedFile = e.target.files[0]
@@ -66,6 +120,20 @@ export default function AdminArticleContent() {
       const reader = new FileReader()
       reader.onload = () => {
         setNewImagePreview(reader.result as string)
+      }
+      reader.readAsDataURL(selectedFile)
+    }
+  }
+
+  let handleUpdateFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      const selectedFile = e.target.files[0]
+      setUpdateFile(selectedFile)
+
+      // Preview the selected image
+      const reader = new FileReader()
+      reader.onload = () => {
+        setUpdateImagePreview(reader.result as string)
       }
       reader.readAsDataURL(selectedFile)
     }
@@ -187,6 +255,7 @@ export default function AdminArticleContent() {
             display: 'flex',
             flexDirection: 'column',
             position: 'relative',
+            fontFamily: 'Mulish',
           }}
         >
           <Button
@@ -208,8 +277,11 @@ export default function AdminArticleContent() {
               maxWidth: '1140px',
               display: 'flex',
               flexDirection: 'column',
+              justifyContent: 'center',
+              alignItems: 'center',
               gap: '8px',
               mt: '20px',
+              mx: 'auto',
             }}
           >
             <Typography
@@ -305,100 +377,304 @@ export default function AdminArticleContent() {
             }}
           >
             {Array.isArray(sortedContentList) &&
-              sortedContentList.map((aContent, index) => (
-                <Box
-                  key={index}
-                  sx={{
-                    width: '100%',
-                    border: '1px solid #999',
-                    borderRadius: '8px',
-                    padding: '8px',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    gap: '4px',
-                    backgroundColor: '#fff',
-
-                    '&:hover': {
-                      backgroundColor: '#B7905C10',
-                      boxShadow: 2,
-                    },
-                  }}
-                >
+              sortedContentList.map((aContent, index) =>
+                editIndex !== index ? (
                   <Box
+                    key={index}
                     sx={{
+                      width: '100%',
+                      border: '1px solid #999',
+                      borderRadius: '8px',
+                      padding: '8px',
                       display: 'flex',
-                      flexDirection: 'row',
-                      gap: '8px',
-                      justifyContent: 'start',
-                      alignItems: 'center',
-                      flexWrap: 'wrap',
+                      flexDirection: 'column',
+                      gap: '4px',
+                      backgroundColor: '#fff',
+                      position: 'relative',
+
+                      '&:hover': {
+                        backgroundColor: '#B7905C10',
+                        boxShadow: 2,
+                      },
                     }}
                   >
                     <Box
-                      display={{
+                      sx={{
+                        position: 'absolute',
+                        top: '8px',
+                        right: '8px',
                         display: 'flex',
                         flexDirection: 'row',
-                        gap: '2px',
                         justifyContent: 'center',
                         alignItems: 'center',
+                        gap: '8px',
                       }}
                     >
-                      <AspectRatioOutlinedIcon sx={{ color: '#BD538E', height: '14px' }} />
-                      <Typography
-                        sx={{
-                          color: '#BD538E',
-                          fontSize: '14px',
-                          fontWeight: 700,
-                          fontFamily: 'Mulish',
-                        }}
+                      <Button
+                        variant="contained"
+                        onClick={() => handleUpdate(index)}
+                        startIcon={<CheckCircleIcon sx={{ width: '16px', height: '16px' }} />}
+                        sx={{ fontSize: '16', fontWeight: 600, backgroundColor: '#28BFDF  ', '&:hover': { backgroundColor: '#28BFDF ' } }}
                       >
-                        {aContent.width}
-                      </Typography>
+                        OK
+                      </Button>
+                      <Button
+                        variant="contained"
+                        onClick={() => setEditIndex(-1)}
+                        color="warning"
+                        startIcon={<CancelIcon sx={{ width: '16px', height: '16px' }} />}
+                        sx={{ fontSize: '16', fontWeight: 600 }}
+                      >
+                        Cancel
+                      </Button>
                     </Box>
                     <Box
-                      display={{
+                      sx={{
                         display: 'flex',
                         flexDirection: 'row',
-                        gap: '2px',
-                        justifyContent: 'center',
+                        gap: '8px',
+                        justifyContent: 'start',
                         alignItems: 'center',
+                        flexWrap: 'wrap',
                       }}
                     >
-                      <FilePresentIcon sx={{ color: '#00A989', height: '14px' }} />
-                      <Typography
-                        sx={{
-                          color: '#00A989',
-                          fontSize: '14px',
-                          fontWeight: 700,
-                          fontFamily: 'Mulish',
+                      <Box
+                        display={{
+                          display: 'flex',
+                          flexDirection: 'row',
+                          gap: '2px',
+                          justifyContent: 'center',
+                          alignItems: 'center',
                         }}
                       >
-                        {aContent.type}
+                        <AspectRatioOutlinedIcon sx={{ color: '#BD538E', height: '14px' }} />
+                        <Typography
+                          sx={{
+                            color: '#BD538E',
+                            fontSize: '14px',
+                            fontWeight: 700,
+                            fontFamily: 'Mulish',
+                          }}
+                        >
+                          {aContent.width}
+                        </Typography>
+                      </Box>
+                      <Box
+                        display={{
+                          display: 'flex',
+                          flexDirection: 'row',
+                          gap: '2px',
+                          justifyContent: 'center',
+                          alignItems: 'center',
+                        }}
+                      >
+                        <FilePresentIcon sx={{ color: '#00A989', height: '14px' }} />
+                        <Typography
+                          sx={{
+                            color: '#00A989',
+                            fontSize: '14px',
+                            fontWeight: 700,
+                            fontFamily: 'Mulish',
+                          }}
+                        >
+                          {aContent.type}
+                        </Typography>
+                      </Box>
+                    </Box>
+                    {aContent.type === 'text' ? (
+                      <Typography
+                        sx={{
+                          color: '#1a1a1a',
+                          fontSize: '14px',
+                          fontWeight: 400,
+                          mt: '8px',
+                        }}
+                      >
+                        {parse(aContent.content)}
                       </Typography>
+                    ) : aContent.type === 'image' ? (
+                      <Box sx={{ width: '100%', '& img': { width: '100%' } }}>
+                        <img src={aContent.content} alt="" />
+                      </Box>
+                    ) : aContent.type === 'youtube' ? (
+                      <Box sx={{ width: '100%' }}>{parse(convertToEmbedPreview(aContent.content ?? '') ?? '')}</Box>
+                    ) : (
+                      <></>
+                    )}
+                  </Box>
+                ) : (
+                  <Box
+                    key={index}
+                    sx={{
+                      width: '100%',
+                      borderRadius: '8px',
+                      margin: '4px 0 0 auto',
+                      padding: '12px 18px',
+                      fontFamily: 'Mulish',
+                      boxShadow: 2,
+                      gap: '16px',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      backgroundColor: '#0596A610',
+                    }}
+                  >
+                    <Grid container>
+                      <Grid item xs={6} sx={{ pr: '4px' }}>
+                        <FormControl fullWidth>
+                          <InputLabel
+                            sx={{
+                              color: '#0596A6',
+                              backgroundColor: '#fff',
+                            }}
+                          >
+                            Chọn loại nội dung
+                          </InputLabel>
+                          <Select
+                            sx={{
+                              backgroundColor: '#fff',
+                              '& .MuiFormHelperText-root': {
+                                backgroundColor: 'transparent',
+                                color: 'red',
+                              },
+                            }}
+                            labelId="type-label"
+                            id="type-select"
+                            defaultValue={editType}
+                            onChange={(e: any) => setEditType(e.target.value)}
+                          >
+                            {ARTICLE_CONTENT_LIST.map((aItem, aInd) => (
+                              <MenuItem
+                                sx={{
+                                  fontFamily: 'Mulish',
+                                }}
+                                key={aInd}
+                                value={aItem}
+                              >
+                                {aItem}
+                              </MenuItem>
+                            ))}
+                          </Select>
+                        </FormControl>
+                      </Grid>
+                      <Grid item xs={6} sx={{ pl: '4px' }}>
+                        <FormControl fullWidth>
+                          <InputLabel
+                            sx={{
+                              color: '#0596A6',
+                              backgroundColor: '#fff',
+                            }}
+                          >
+                            Chọn kích thước
+                          </InputLabel>
+                          <Select
+                            sx={{
+                              backgroundColor: '#fff',
+                              '& .MuiFormHelperText-root': {
+                                backgroundColor: 'transparent',
+                                color: 'red',
+                              },
+                            }}
+                            labelId="width-label"
+                            id="width-select"
+                            defaultValue={editWidth}
+                            onChange={(e: any) => setEditWidth(e.target.value)}
+                          >
+                            {ARTICLE_CONTENT_WIDTH_LIST.map((aItem, aInd) => (
+                              <MenuItem
+                                sx={{
+                                  fontFamily: 'Mulish',
+                                }}
+                                key={aInd}
+                                value={aItem}
+                              >
+                                {aItem}
+                              </MenuItem>
+                            ))}
+                          </Select>
+                        </FormControl>
+                      </Grid>
+                    </Grid>
+                    {editType === 'text' && (
+                      <Box sx={{ width: '100%', backgroundColor: '#fff', color: '#000' }}>
+                        <ReactQuill
+                          theme="snow"
+                          modules={QUILL_MODULES}
+                          formats={QUILL_FORMAT}
+                          value={editContentContent}
+                          onChange={(value: any) => setEditContentContent(value)}
+                        />
+                      </Box>
+                    )}
+
+                    {editType === 'image' && (
+                      <>
+                        <input type="file" accept="image/*" onChange={handleUpdateFileChange} style={{ display: 'none' }} id="upload-image" />
+                        <label htmlFor="upload-image">
+                          <Button variant="contained" component="span">
+                            Chọn ảnh
+                          </Button>
+                        </label>
+                        {updateImagePreview && <img src={updateImagePreview} alt="Selected" style={{ marginTop: '10px', maxWidth: '100%' }} />}
+                        {updateFile && <Typography sx={{ color: '#1a1a1a' }}>{updateFile.name}</Typography>}
+                      </>
+                    )}
+
+                    {editType === 'youtube' && (
+                      <>
+                        <TextField
+                          id="new-youtube"
+                          label="Nhập link youtube"
+                          variant="outlined"
+                          fullWidth
+                          sx={{
+                            borderRadius: '12px',
+                            color: '#0596A6',
+
+                            '& fieldset': {
+                              borderColor: '#0596A6',
+                              backgroundColor: '#fff',
+                            },
+
+                            '& .MuiFormLabel-root': {
+                              color: '#0596A6',
+                            },
+
+                            '& .MuiFormHelperText-root': {
+                              backgroundColor: 'transparent',
+                              color: 'red',
+                            },
+                            '& input': {
+                              zIndex: 1,
+                            },
+                          }}
+                          value={editContentContent}
+                          onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEditContentContent(e.target.value)}
+                        />
+                        {parse(convertToEmbedPreview(editContentContent ?? '') ?? '')}
+                      </>
+                    )}
+                    <Box sx={{ display: 'flex', flexDirection: 'row', gap: '8px', marginLeft: 'auto' }}>
+                      <Button
+                        variant="contained"
+                        onClick={() => handleUpdate(index)}
+                        startIcon={<CheckCircleIcon sx={{ width: '16px', height: '16px' }} />}
+                        sx={{ fontSize: '16', fontWeight: 600, backgroundColor: '#28BFDF  ', '&:hover': { backgroundColor: '#28BFDF ' } }}
+                      >
+                        OK
+                      </Button>
+                      <Button
+                        onClick={() => setEditIndex(-1)}
+                        variant="contained"
+                        color="warning"
+                        startIcon={<CancelIcon sx={{ width: '16px', height: '16px' }} />}
+                        sx={{ fontSize: '16', fontWeight: 600 }}
+                      >
+                        Cancel
+                      </Button>
                     </Box>
                   </Box>
-                  {aContent.type === 'text' ? (
-                    <Typography
-                      sx={{
-                        color: '#1a1a1a',
-                        fontSize: '14px',
-                        fontWeight: 400,
-                        mt: '8px',
-                      }}
-                    >
-                      {parse(aContent.content)}
-                    </Typography>
-                  ) : aContent.type === 'image' ? (
-                    <Box sx={{ width: '100%', '& img': { width: '100%' } }}>
-                      <img src={aContent.content} alt="" />
-                    </Box>
-                  ) : aContent.type === 'youtube' ? (
-                    <Box sx={{ width: '100%' }}>{parse(convertToEmbedPreview(aContent.content ?? '') ?? '')}</Box>
-                  ) : (
-                    <></>
-                  )}
-                </Box>
-              ))}
+                )
+              )}
             <Button
               startIcon={<AddCircleOutlineIcon sx={{ color: '#fff' }} />}
               sx={{

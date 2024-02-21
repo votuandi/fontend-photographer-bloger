@@ -9,7 +9,7 @@ export type GET_CONTENTS_BY_ARTICLE_ID_RESPONSE = ARTICLE_CONTENT_ITEM_TYPE[]
 
 export type ARTICLE_CONTENT_ITEM_TYPE = {
   id: string
-  previous?: string
+  previous?: string | null
   type: string
   content: string
   width: string
@@ -27,19 +27,15 @@ export type CREATE_ARTICLE_CONTENT_DTO = {
   }
 }
 
-// export type GET_ARTICLE_LIST_RESPONSE = ARTICLE_ITEM_TYPE[]
-
-// export type UPDATE_ARTICLE_DTO = {
-//   params: {
-//     title: string
-//     shortDescription: string
-//     publicTime: string
-//     hashtag: string
-//     categoryId: string
-//     active: '1' | '0'
-//     thumbnail: File | undefined
-//   }
-// }
+export type UPDATE_ARTICLE_CONTENT_DTO = {
+  params: {
+    previous: string
+    type: string
+    content: string
+    width: string
+    articleId: string
+  }
+}
 
 // export type CREATE_ARTICLE_DTO = {
 //   params: {
