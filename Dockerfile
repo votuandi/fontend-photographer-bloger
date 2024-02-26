@@ -1,17 +1,5 @@
-FROM node:latest as build
-
+FROM node:18-alpine AS builder
 WORKDIR /app-fe
-
 COPY . .
-RUN npm install
-
-COPY . .
-RUN npm run build
-
-FROM nginx:latest
-
-COPY --from=build /app-fe/.next /usr/share/nginx/html
-
-EXPOSE 80
-
-CMD ["nginx", "-g", "daemon off;"]
+RUN yarn install && yarn cache clean && yarn build
+CMD [ "sh", "-c", "yarn run start"]
