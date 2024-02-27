@@ -975,6 +975,7 @@ export default function AdminArticleContent() {
                     flexWrap: 'wrap',
                     gap: '8px',
                     mt: '8px',
+                    mb: '16px',
                   }}
                 >
                   <Box
@@ -1033,6 +1034,7 @@ export default function AdminArticleContent() {
                     flexDirection: 'column',
                     justifyContent: 'start',
                     alignItems: 'center',
+                    mb: '16px',
                   }}
                 >
                   {sortedContentList.map((contentItem, cIndex) => (
@@ -1040,6 +1042,13 @@ export default function AdminArticleContent() {
                       key={cIndex}
                       sx={{
                         width: contentItem.width,
+                        '& img': {
+                          margin: '12px 0 0 0 !important',
+                        },
+
+                        '& p,span': {
+                          margin: '0 0 6px 0 !important',
+                        },
                       }}
                     >
                       {contentItem.type === 'text' ? (

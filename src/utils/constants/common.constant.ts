@@ -27,6 +27,7 @@ export const QUILL_MODULES = {
     [{ list: 'ordered' }, { list: 'bullet' }, { indent: '-1' }, { indent: '+1' }],
     ['link', 'image', 'video'],
     [{ color: [] }, { background: [] }], // add this line for text color
+    [{ align: '' }, { align: 'center' }, { align: 'right' }, { align: 'justify' }], // Add alignment options
     ['clean'],
   ],
 }
@@ -47,5 +48,6 @@ export const QUILL_FORMAT = [
   'image',
   'video',
   'color',
+  'align',
   'background', // add this line for text color
 ]

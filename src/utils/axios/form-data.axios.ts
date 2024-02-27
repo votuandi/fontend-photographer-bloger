@@ -9,7 +9,7 @@ import { commonHelpers } from '../helpers'
 // })
 
 const formDataAxios = axios.create({
-  baseURL: `http://${commonConfig.API_HOST}`,
+  baseURL: `https://${commonConfig.API_HOST}`,
 })
 
 formDataAxios.interceptors.request.use(
