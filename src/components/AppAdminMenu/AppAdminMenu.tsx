@@ -30,12 +30,12 @@ const AppAdminMenu = (props: IProps, ref: React.ForwardedRef<any>) => {
       sx={{
         width: '360px',
         height: '100vh',
-        backgroundColor: '#262933',
+        backgroundColor: '#51000b',
         displayL: 'flex',
         flexDirection: 'column',
         // padding: '16px 12px',
         boxShadow: 'rgba(0, 0, 0, 0.3) 0px 19px 38px, rgba(0, 0, 0, 0.22) 0px 15px 12px',
-        borderRight: '1px solid #2b303b',
+        // borderRight: '1px solid #2b303b',
         overflow: 'auto',
       }}
     >
@@ -44,7 +44,7 @@ const AppAdminMenu = (props: IProps, ref: React.ForwardedRef<any>) => {
           fontFamily: 'Mulish',
           color: 'white',
           textAlign: 'center',
-          backgroundColor: '#313641',
+          backgroundColor: '#62000D',
           py: '36px',
           cursor: 'pointer',
           fontWeight: 500,
@@ -58,15 +58,15 @@ const AppAdminMenu = (props: IProps, ref: React.ForwardedRef<any>) => {
           <Box
             sx={{
               padding: '16px 24px',
-              backgroundColor: router.pathname.split('/').reverse()[0] === item.path.split('/').reverse()[0] ? '#2B2F38' : '#262933',
+              backgroundColor: router.pathname.split('/').reverse()[0] === item.path.split('/').reverse()[0] ? '#880012' : '#51000b',
               color: router.pathname.split('/').reverse()[0] === item.path.split('/').reverse()[0] ? '#fff' : '#ccc',
               fontWeight: router.pathname.split('/').reverse()[0] === item.path.split('/').reverse()[0] ? 800 : 400,
               fontFamily: 'Mulish',
               cursor: 'pointer',
 
               '&:hover': {
-                backgroundColor: '#768099',
-                color: '#1a1a1a',
+                backgroundColor: '#ffffffa7',
+                color: '#880012',
                 fontWeight: router.pathname.split('/').reverse()[0] === item.path.split('/').reverse()[0] ? 800 : 600,
               },
             }}
