@@ -1040,7 +1040,8 @@ export default function AdminArticleContent() {
                     <Box
                       key={cIndex}
                       sx={{
-                        width: contentItem.width,
+                        width: '100%',
+                        maxWidth: contentItem.width,
                         '& img': {
                           margin: '12px 0 0 0 !important',
                         },
