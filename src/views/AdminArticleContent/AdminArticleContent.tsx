@@ -5,7 +5,7 @@ import { useRouter } from 'next/router'
 import { useIsMounted } from 'usehooks-ts'
 import Slider from 'react-slick'
 import useStyles from './AdminArticleContent.style'
-import { Box, Button, CircularProgress, FormControl, FormLabel, Grid, InputLabel, MenuItem, Select, Switch, TextField, Typography } from '@mui/material'
+import { Box, Button, CircularProgress, FormControl, FormLabel, Grid, InputLabel, MenuItem, Select, Switch, TextField, Typography, useMediaQuery } from '@mui/material'
 import Head from 'next/head'
 import articleApi, { ARTICLE_ITEM_TYPE } from '@/utils/api/article'
 import ArrowBackOutlinedIcon from '@mui/icons-material/ArrowBackOutlined'
@@ -30,10 +30,12 @@ import CloseIcon from '@mui/icons-material/Close'
 
 import BorderColorIcon from '@mui/icons-material/BorderColor'
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline'
+import theme from '@/assets/theme'
 export default function AdminArticleContent() {
   const { t, i18n } = useTranslation()
   const locale = i18n.language
   const router = useRouter()
+  const isSmallScreen = useMediaQuery(theme.breakpoints.down(600))
 
   const [isShowNewPopup, setIsShowNewPopup] = useState<boolean>(false)
   const [isLoading, setIsLoading] = useState<boolean>(false)
@@ -929,28 +931,38 @@ export default function AdminArticleContent() {
             >
               <Box
                 sx={{
+                  cursor: 'pointer',
+                  padding: '8px 8px 4px 8px',
+                  backgroundColor: '#8E0000',
+                  borderRadius: '50%',
+                  position: 'fixed',
+                  right: '8px',
+                  top: '16px',
+                  zIndex: 90,
+                  boxShadow: 3,
+                }}
+                className="slideInUp"
+                onClick={() => setIsShowPreview(false)}
+              >
+                <CloseIcon sx={{ color: '#fff', height: '24px' }} />
+              </Box>
+              <Box
+                sx={{
                   backgroundColor: '#fff',
                   borderTopRightRadius: '20px',
                   borderTopLeftRadius: '20px',
-                  height: '99vh',
+                  height: isSmallScreen ? '90vh' : '99vh',
                   width: '100vw',
                   display: 'flex',
                   flexDirection: 'column',
                   justifyContent: 'start',
                   alignItems: 'center',
                   overflow: 'auto',
+                  position: 'relative',
+                  pt: '40px',
                 }}
                 className="slideInUp"
               >
-                <Box
-                  sx={{
-                    margin: '8px 16px 8px auto',
-                    cursor: 'pointer',
-                  }}
-                  onClick={() => setIsShowPreview(false)}
-                >
-                  <CloseIcon sx={{ color: '#000', height: '24px' }} />
-                </Box>
                 <Typography
                   sx={{
                     fontFamily: 'Mulish',
@@ -961,6 +973,7 @@ export default function AdminArticleContent() {
                     width: '100%',
                     maxWidth: '1200px',
                     textAlign: 'center',
+                    px: isSmallScreen ? '8px' : 0,
                   }}
                 >
                   {article?.title}
@@ -976,6 +989,7 @@ export default function AdminArticleContent() {
                     gap: '8px',
                     mt: '8px',
                     mb: '16px',
+                    px: isSmallScreen ? '8px' : 0,
                   }}
                 >
                   <Box
@@ -1048,6 +1062,7 @@ export default function AdminArticleContent() {
 
                         '& p,span': {
                           margin: '0 0 6px 0 !important',
+                          px: isSmallScreen ? '8px' : '0',
                         },
                       }}
                     >
