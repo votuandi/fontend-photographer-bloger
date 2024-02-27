@@ -1,8 +1,8 @@
 /* eslint-disable @next/next/no-img-element */
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'next-i18next'
 import { useRouter } from 'next/router'
-import { useIsMounted } from 'usehooks-ts'
+import { useIsMounted, useOnClickOutside } from 'usehooks-ts'
 import useStyles from './AdminArticle.style'
 import { Box, Button, CircularProgress, FormControl, FormLabel, Grid, InputLabel, MenuItem, Select, Switch, TextField, Typography, useMediaQuery } from '@mui/material'
 import Head from 'next/head'
@@ -25,12 +25,17 @@ import LocalOfferIcon from '@mui/icons-material/LocalOffer'
 import PhotoLibraryOutlinedIcon from '@mui/icons-material/PhotoLibraryOutlined'
 import EventAvailableOutlinedIcon from '@mui/icons-material/EventAvailableOutlined'
 import theme from '@/assets/theme'
+import MenuIcon from '@mui/icons-material/Menu'
+import AppAdminMenu from '@/components/AppAdminMenu'
 
 export default function AdminArticle() {
   const { t, i18n } = useTranslation()
   const locale = i18n.language
   const isSmallScreen = useMediaQuery(theme.breakpoints.down(600))
+  const isSmallScreenMenu = useMediaQuery(theme.breakpoints.down(900))
+  const menuRef = useRef(null)
 
+  const [isShowMenu, setIsShowMenu] = useState<boolean>(false)
   const [isShowNewPopup, setIsShowNewPopup] = useState<boolean>(false)
   const [newTitle, setNewTitle] = useState<string>('')
   const [newShortDescription, setNewShortDescription] = useState<string>('')
@@ -258,6 +263,12 @@ export default function AdminArticle() {
     await GetCategoryList()
   }
 
+  let closeMenuPopup = () => {
+    setIsShowMenu(false)
+  }
+
+  useOnClickOutside(menuRef, closeMenuPopup)
+
   useEffect(() => {
     if (isMounted()) return
     FetchData()
@@ -290,8 +301,22 @@ export default function AdminArticle() {
             display: 'flex',
             flexDirection: 'column',
             position: 'relative',
+            pb: '80px',
           }}
         >
+          {isShowMenu && isSmallScreenMenu && (
+            <Box
+              sx={{
+                position: 'fixed',
+                top: 0,
+                left: 0,
+                zIndex: 99,
+              }}
+              ref={menuRef}
+            >
+              <AppAdminMenu />
+            </Box>
+          )}
           <Box
             sx={{
               width: '100%',
@@ -303,17 +328,43 @@ export default function AdminArticle() {
               alignItems: 'baseline',
             }}
           >
-            <Typography
-              variant="headerSemi35"
+            <Box
               sx={{
-                fontFamily: 'Mulish',
-                fontWeight: 900,
-                fontSize: '36px',
-                color: '#62000D',
+                display: 'flex',
+                flexDirection: 'row',
+                justifyContent: 'center',
+                gap: '8px',
+                alignItems: 'baseline',
               }}
             >
-              Quản Lý Bài viết
-            </Typography>
+              {isSmallScreenMenu && (
+                <Button
+                  sx={{
+                    backgroundColor: '#7B071A',
+                    padding: '12px ',
+                    fontFamily: 'Mulish',
+                    fontWeight: 600,
+                    fontSize: '16px',
+                    color: '#fff',
+                    '&:hover': { backgroundColor: '#7C310A' },
+                  }}
+                  onClick={() => setIsShowMenu((x) => !x)}
+                >
+                  <MenuIcon sx={{ color: '#fff' }} />
+                </Button>
+              )}
+              <Typography
+                variant="headerSemi35"
+                sx={{
+                  fontFamily: 'Mulish',
+                  fontWeight: 900,
+                  fontSize: '36px',
+                  color: '#62000D',
+                }}
+              >
+                Quản Lý Bài viết
+              </Typography>
+            </Box>
             <Button
               startIcon={<AddCircleOutlineIcon sx={{ color: '#fff' }} />}
               sx={{

@@ -1,7 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react'
 import useStyles from './Admin.styles'
-import { Box } from '@mui/material'
+import { Box, Button, useMediaQuery } from '@mui/material'
 import AppAdminMenu from '@/components/AppAdminMenu'
+import theme from '@/assets/theme'
 
 type MainProps = {
   children: React.ReactNode
@@ -9,7 +10,7 @@ type MainProps = {
 
 const Main = (props: MainProps) => {
   const { children } = props
-
+  const isSmallScreen = useMediaQuery(theme.breakpoints.down(900))
   const { classes } = useStyles({
     params: {},
   })
@@ -23,12 +24,14 @@ const Main = (props: MainProps) => {
         flexDirection: 'row',
       }}
     >
-      <AppAdminMenu />
+      {!isSmallScreen && <AppAdminMenu />}
       <Box
         sx={{
           width: '100%',
           height: '100vh',
           overflow: 'auto',
+          display: 'flex',
+          flexDirection: 'column',
         }}
       >
         {children}

@@ -16,16 +16,13 @@ type IProps = {}
 
 const AppAdminMenu = (props: IProps, ref: React.ForwardedRef<any>) => {
   const { t, i18n } = useTranslation()
-  const isSmallScreen = useMediaQuery(theme.breakpoints.down(900))
   const router = useRouter()
 
   const { classes } = useStyles({
     params: {},
   })
 
-  return isSmallScreen ? (
-    <></>
-  ) : (
+  return (
     <Box
       sx={{
         width: '360px',

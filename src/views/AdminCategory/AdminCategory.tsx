@@ -1,8 +1,8 @@
 /* eslint-disable @next/next/no-img-element */
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'next-i18next'
 import { useRouter } from 'next/router'
-import { useIsMounted } from 'usehooks-ts'
+import { useIsMounted, useOnClickOutside } from 'usehooks-ts'
 import useStyles from './AdminCategory.style'
 import {
   Box,
@@ -19,6 +19,7 @@ import {
   Switch,
   TextField,
   Typography,
+  useMediaQuery,
 } from '@mui/material'
 import AppAdminMenu from '@/components/AppAdminMenu'
 import Head from 'next/head'
@@ -29,12 +30,16 @@ import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline'
 import CheckCircleIcon from '@mui/icons-material/CheckCircle'
 import CancelIcon from '@mui/icons-material/Cancel'
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline'
-import { API_HOST } from '@/utils/configs/common'
+import theme from '@/assets/theme'
+import MenuIcon from '@mui/icons-material/Menu'
 
 export default function AdminCategory() {
   const { t, i18n } = useTranslation()
   const locale = i18n.language
+  const isSmallScreenMenu = useMediaQuery(theme.breakpoints.down(900))
+  const menuRef = useRef(null)
 
+  const [isShowMenu, setIsShowMenu] = useState<boolean>(false)
   const [categoryList, setCategoryList] = useState<CATEGORY_ITEM_TYPE[]>([])
   const [editIndex, setEditIndex] = useState<number>(-1)
   const [editActive, setEditActive] = useState<boolean>(true)
@@ -199,6 +204,12 @@ export default function AdminCategory() {
     await GetCategoryList()
   }
 
+  let closeMenuPopup = () => {
+    setIsShowMenu(false)
+  }
+
+  useOnClickOutside(menuRef, closeMenuPopup)
+
   useEffect(() => {
     if (isMounted()) return
     FetchData()
@@ -233,6 +244,19 @@ export default function AdminCategory() {
             position: 'relative',
           }}
         >
+          {isShowMenu && isSmallScreenMenu && (
+            <Box
+              sx={{
+                position: 'fixed',
+                top: 0,
+                left: 0,
+                zIndex: 99,
+              }}
+              ref={menuRef}
+            >
+              <AppAdminMenu />
+            </Box>
+          )}
           <Box
             sx={{
               width: '100%',
@@ -244,17 +268,44 @@ export default function AdminCategory() {
               alignItems: 'baseline',
             }}
           >
-            <Typography
-              variant="headerSemi35"
+            <Box
               sx={{
-                fontFamily: 'Mulish',
-                fontWeight: 900,
-                fontSize: '36px',
-                color: '#62000D',
+                display: 'flex',
+                flexDirection: 'row',
+                justifyContent: 'center',
+                alignItems: 'baseline',
+                gap: '8px',
               }}
             >
-              Quản Lý Danh mục
-            </Typography>
+              {isSmallScreenMenu && (
+                <Button
+                  sx={{
+                    backgroundColor: '#7B071A',
+                    padding: '12px ',
+                    fontFamily: 'Mulish',
+                    fontWeight: 600,
+                    fontSize: '16px',
+                    color: '#fff',
+                    '&:hover': { backgroundColor: '#7C310A' },
+                  }}
+                  onClick={() => setIsShowMenu((x) => !x)}
+                >
+                  <MenuIcon sx={{ color: '#fff' }} />
+                </Button>
+              )}
+              <Typography
+                variant="headerSemi35"
+                sx={{
+                  fontFamily: 'Mulish',
+                  fontWeight: 900,
+                  fontSize: '36px',
+                  color: '#62000D',
+                }}
+              >
+                Quản Lý Danh mục
+              </Typography>
+            </Box>
+
             <Button
               startIcon={<AddCircleOutlineIcon sx={{ color: '#fff' }} />}
               sx={{
