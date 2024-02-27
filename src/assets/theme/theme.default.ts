@@ -104,33 +104,33 @@ const defaultTheme = createTheme({
     },
     keys: ['xs', 'mobile', 'md', 'desktop', 'lg', 'xl'],
   },
-  // palette: {
-  //   primary: {
-  //     main: appColors.pinkDark,
-  //     contrastText: muiTheme.palette.common.white,
-  //   },
-  //   secondary: {
-  //     dark: appColors.neutralDark,
-  //     main: appColors.neutral,
-  //     light: appColors.neutralLight,
-  //   },
-  //   error: {
-  //     main: appColors.error,
-  //     contrastText: muiTheme.palette.common.white,
-  //   },
-  //   background: {
-  //     default: appColors.neutralLightest,
-  //   },
-  //   divider: appColors.neutralLight,
-  //   text: {
-  //     primary: appColors.neutralDark,
-  //     secondary: appColors.neutral,
-  //     disabled: appColors.neutral,
-  //   },
-  //   common: {
-  //     ...appColors,
-  //   },
-  // },
+  palette: {
+    primary: {
+      main: '#8E0000',
+      contrastText: muiTheme.palette.common.white,
+    },
+    // secondary: {
+    //   dark: appColors.neutralDark,
+    //   main: appColors.neutral,
+    //   light: appColors.neutralLight,
+    // },
+    // error: {
+    //   main: appColors.error,
+    //   contrastText: muiTheme.palette.common.white,
+    // },
+    // background: {
+    //   default: appColors.neutralLightest,
+    // },
+    // divider: appColors.neutralLight,
+    // text: {
+    //   primary: appColors.neutralDark,
+    //   secondary: appColors.neutral,
+    //   disabled: appColors.neutral,
+    // },
+    // common: {
+    //   ...appColors,
+    // },
+  },
   components: {
     MuiCssBaseline: {
       styleOverrides: (themeParams: any) => `

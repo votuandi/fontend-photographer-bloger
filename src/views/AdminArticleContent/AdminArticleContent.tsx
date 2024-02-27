@@ -415,7 +415,7 @@ export default function AdminArticleContent() {
                       position: 'relative',
 
                       '&:hover': {
-                        backgroundColor: '#B7905C10',
+                        backgroundColor: '#7C310A10',
                         boxShadow: 2,
                       },
                     }}
@@ -701,7 +701,7 @@ export default function AdminArticleContent() {
             <Button
               startIcon={<AddCircleOutlineIcon sx={{ color: '#fff' }} />}
               sx={{
-                backgroundColor: '#DBB070',
+                backgroundColor: '#7B071A',
                 padding: '12px ',
                 fontFamily: 'Mulish',
                 fontWeight: 600,
@@ -710,7 +710,7 @@ export default function AdminArticleContent() {
                 width: 'fit-content',
                 mx: 'auto',
                 mt: '12px',
-                '&:hover': { backgroundColor: '#B7905C' },
+                '&:hover': { backgroundColor: '#7C310A' },
               }}
               onClick={handleNewEvent}
             >
@@ -1034,7 +1034,6 @@ export default function AdminArticleContent() {
                     flexDirection: 'column',
                     justifyContent: 'start',
                     alignItems: 'center',
-                    mb: '16px',
                   }}
                 >
                   {sortedContentList.map((contentItem, cIndex) => (
@@ -1083,7 +1082,7 @@ export default function AdminArticleContent() {
                 zIndex: 91,
               }}
             >
-              <CircularProgress sx={{ width: '80px', height: '80px', color: '#DBB070' }} />
+              <CircularProgress sx={{ width: '80px', height: '80px', color: '#7B071A' }} />
             </Box>
           )}
         </Box>

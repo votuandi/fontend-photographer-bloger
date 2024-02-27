@@ -307,7 +307,7 @@ export default function AdminArticle() {
                 fontFamily: 'Mulish',
                 fontWeight: 900,
                 fontSize: '36px',
-                color: '#936F48',
+                color: '#62000D',
               }}
             >
               Quản Lý Bài viết
@@ -315,13 +315,13 @@ export default function AdminArticle() {
             <Button
               startIcon={<AddCircleOutlineIcon sx={{ color: '#fff' }} />}
               sx={{
-                backgroundColor: '#DBB070',
+                backgroundColor: '#7B071A',
                 padding: '12px ',
                 fontFamily: 'Mulish',
                 fontWeight: 600,
                 fontSize: '16px',
                 color: '#fff',
-                '&:hover': { backgroundColor: '#B7905C' },
+                '&:hover': { backgroundColor: '#7C310A' },
               }}
               onClick={handleNewEvent}
             >
@@ -557,14 +557,14 @@ export default function AdminArticle() {
                   display: 'flex',
                   flexDirection: 'column',
                   borderRadius: '8px',
-                  border: '1px solid #DBB070',
+                  border: '1px solid #7B071A',
                   padding: '6px 10px',
                   cursor: 'pointer',
-                  backgroundColor: index === editIndex ? '#DBB07010' : '#fff',
+                  backgroundColor: index === editIndex ? '#7B071A10' : '#fff',
 
                   '&:hover': {
                     boxShadow: 3,
-                    backgroundColor: '#DBB07020',
+                    backgroundColor: '#7B071A20',
                   },
                 }}
               >
@@ -818,7 +818,7 @@ export default function AdminArticle() {
                         <>
                           {/* <Typography sx={{ fontFamily: 'Mulish', fontSize: '18px', fontWeight: 600, color: '#1a1a1a' }}>Danh mục:</Typography> */}
                           <PhotoLibraryOutlinedIcon sx={{ color: '#0596A6', height: '20px' }} />
-                          <Typography sx={{ fontFamily: 'Mulish', fontSize: '16px', fontWeight: 700, color: '#936F48' }}>{item?.category?.name}</Typography>
+                          <Typography sx={{ fontFamily: 'Mulish', fontSize: '16px', fontWeight: 700, color: '#62000D' }}>{item?.category?.name}</Typography>
                         </>
                       )}
                     </Box>
@@ -829,7 +829,7 @@ export default function AdminArticle() {
                         <>
                           {/* <Typography sx={{ fontFamily: 'Mulish', fontSize: '18px', fontWeight: 600, color: '#1a1a1a' }}>Thời gian đăng bài:</Typography> */}
                           <EventAvailableOutlinedIcon sx={{ color: '#0596A6', height: '20px' }} />
-                          <Typography sx={{ fontFamily: 'Mulish', fontSize: '16px', fontWeight: 700, color: '#936F48' }}>{formatDate(new Date(item?.publicTime ?? ''))}</Typography>
+                          <Typography sx={{ fontFamily: 'Mulish', fontSize: '16px', fontWeight: 700, color: '#62000D' }}>{formatDate(new Date(item?.publicTime ?? ''))}</Typography>
                         </>
                       )}
                     </Box>
@@ -870,8 +870,8 @@ export default function AdminArticle() {
                         fontSize: '16',
                         fontWeight: 600,
                         fontFamily: 'Mulish',
-                        backgroundColor: editIndex === index ? '#999' : '#DBB070',
-                        '&:hover': { backgroundColor: editIndex === index ? '#999' : '#AF7337' },
+                        backgroundColor: editIndex === index ? '#999' : '#7B071A',
+                        '&:hover': { backgroundColor: editIndex === index ? '#999' : '#7C310A' },
                       }}
                     >
                       Soạn thảo
@@ -952,7 +952,7 @@ export default function AdminArticle() {
                 zIndex: 91,
               }}
             >
-              <CircularProgress sx={{ width: '80px', height: '80px', color: '#DBB070' }} />
+              <CircularProgress sx={{ width: '80px', height: '80px', color: '#7B071A' }} />
             </Box>
           )}
         </Box>

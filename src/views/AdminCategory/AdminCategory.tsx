@@ -250,7 +250,7 @@ export default function AdminCategory() {
                 fontFamily: 'Mulish',
                 fontWeight: 900,
                 fontSize: '36px',
-                color: '#936F48',
+                color: '#62000D',
               }}
             >
               Quản Lý Danh mục
@@ -258,13 +258,13 @@ export default function AdminCategory() {
             <Button
               startIcon={<AddCircleOutlineIcon sx={{ color: '#fff' }} />}
               sx={{
-                backgroundColor: '#DBB070',
+                backgroundColor: '#7B071A',
                 padding: '12px ',
                 fontFamily: 'Mulish',
                 fontWeight: 600,
                 fontSize: '16px',
                 color: '#fff',
-                '&:hover': { backgroundColor: '#B7905C' },
+                '&:hover': { backgroundColor: '#7C310A' },
               }}
               onClick={handleNewEvent}
             >
@@ -376,10 +376,10 @@ export default function AdminCategory() {
                   color: '#fff',
                   fontWeight: 600,
                   fontSize: '16px',
-                  border: '1px solid #DBB070',
+                  border: '1px solid #7B071A',
                   padding: '12px 6px',
                   borderTopLeftRadius: '12px',
-                  backgroundColor: '#DBB070',
+                  backgroundColor: '#7B071A',
                 }}
               >
                 STT
@@ -392,10 +392,10 @@ export default function AdminCategory() {
                   color: '#fff',
                   fontWeight: 600,
                   fontSize: '16px',
-                  borderTop: '1px solid #DBB070',
-                  borderBottom: '1px solid #DBB070',
+                  borderTop: '1px solid #7B071A',
+                  borderBottom: '1px solid #7B071A',
                   padding: '12px 6px',
-                  backgroundColor: '#DBB070',
+                  backgroundColor: '#7B071A',
                 }}
               >
                 Tên danh mục
@@ -408,10 +408,10 @@ export default function AdminCategory() {
                   color: '#fff',
                   fontWeight: 600,
                   fontSize: '16px',
-                  borderTop: '1px solid #DBB070',
-                  borderBottom: '1px solid #DBB070',
+                  borderTop: '1px solid #7B071A',
+                  borderBottom: '1px solid #7B071A',
                   padding: '12px 6px',
-                  backgroundColor: '#DBB070',
+                  backgroundColor: '#7B071A',
                 }}
               >
                 Ảnh đại diện
@@ -424,10 +424,10 @@ export default function AdminCategory() {
                   color: '#fff',
                   fontWeight: 600,
                   fontSize: '16px',
-                  borderTop: '1px solid #DBB070',
-                  borderBottom: '1px solid #DBB070',
+                  borderTop: '1px solid #7B071A',
+                  borderBottom: '1px solid #7B071A',
                   padding: '12px 6px',
-                  backgroundColor: '#DBB070',
+                  backgroundColor: '#7B071A',
                 }}
               >
                 Kích hoạt
@@ -440,10 +440,10 @@ export default function AdminCategory() {
                   color: '#fff',
                   fontWeight: 600,
                   fontSize: '16px',
-                  border: '1px solid #DBB070',
+                  border: '1px solid #7B071A',
                   padding: '12px 6px',
                   borderTopRightRadius: '12px',
-                  backgroundColor: '#DBB070',
+                  backgroundColor: '#7B071A',
                 }}
               >
                 Hành động
@@ -456,7 +456,7 @@ export default function AdminCategory() {
                 sx={{
                   width: '100%',
                   fontFamily: 'Mulish',
-                  backgroundColor: index === editIndex ? '#DBB07020' : '#fff',
+                  backgroundColor: index === editIndex ? '#7B071A20' : '#fff',
 
                   '& .MuiGrid-item': {
                     display: 'flex',
@@ -475,7 +475,7 @@ export default function AdminCategory() {
                     fontSize: '16px',
                     fontWeight: 400,
                     textAlign: 'center',
-                    border: '1px solid #DBB070',
+                    border: '1px solid #7B071A',
                     borderTop: 'none',
                     padding: '12px 6px',
                   }}
@@ -490,7 +490,7 @@ export default function AdminCategory() {
                     fontSize: '16px',
                     fontWeight: 600,
                     textAlign: 'left',
-                    borderBottom: '1px solid #DBB070',
+                    borderBottom: '1px solid #7B071A',
                     borderTop: 'none',
                     padding: '12px 24px',
                     justifyContent: 'start !important',
@@ -503,11 +503,11 @@ export default function AdminCategory() {
                         borderRadius: '12px',
 
                         '& fieldset': {
-                          borderColor: '#DBB070',
+                          borderColor: '#7B071A',
                         },
 
                         '& .MuiFormLabel-root': {
-                          color: '#DBB070',
+                          color: '#7B071A',
                         },
                       }}
                       fullWidth
@@ -526,7 +526,7 @@ export default function AdminCategory() {
                     fontSize: '16px',
                     fontWeight: 600,
                     textAlign: 'left',
-                    borderBottom: '1px solid #DBB070',
+                    borderBottom: '1px solid #7B071A',
                     borderTop: 'none',
                     padding: '12px 24px',
 
@@ -547,7 +547,7 @@ export default function AdminCategory() {
                     >
                       <input type="file" accept="image/*" onChange={handleUpdateFileChange} style={{ display: 'none' }} id="upload-image" />
                       <label htmlFor="upload-image">
-                        <Button sx={{ backgroundColor: '#DBB070', borderRadius: '4px' }} variant="contained" component="span">
+                        <Button sx={{ backgroundColor: '#7B071A', borderRadius: '4px' }} variant="contained" component="span">
                           Chọn ảnh khác
                         </Button>
                       </label>
@@ -566,7 +566,7 @@ export default function AdminCategory() {
                     fontSize: '16px',
                     fontWeight: 600,
                     textAlign: 'left',
-                    borderBottom: '1px solid #DBB070',
+                    borderBottom: '1px solid #7B071A',
                     borderTop: 'none',
                     padding: '12px 24px',
                   }}
@@ -590,7 +590,7 @@ export default function AdminCategory() {
                     justifyContent: 'center',
                     alignItems: 'center',
                     columnGap: '8px',
-                    border: '1px solid #DBB070',
+                    border: '1px solid #7B071A',
                     borderTop: 'none',
                     padding: '12px 6px',
                     gap: '8px',
@@ -655,7 +655,7 @@ export default function AdminCategory() {
                 zIndex: 91,
               }}
             >
-              <CircularProgress sx={{ width: '80px', height: '80px', color: '#DBB070' }} />
+              <CircularProgress sx={{ width: '80px', height: '80px', color: '#7B071A' }} />
             </Box>
           )}
         </Box>
