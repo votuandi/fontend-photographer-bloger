@@ -11,14 +11,23 @@ import { NextSeo } from 'next-seo'
 type ISeoProps = {
   title: string
   description: string
-  image: string
+  openGraph?: any
 }
 
 export const getServerSideProps = (async ({ locale }) => {
   let seoData: ISeoProps = {
     title: 'Kỳ Anh Nguyễn Home Page',
     description: 'Kỳ Anh Nguyễn . 𝗧𝗿𝗮𝘃𝗲𝗹 𝗕𝗹𝗼𝗴𝗴𝗲𝗿 . 𝗖𝗼𝗻𝘁𝗲𝗻𝘁 𝗖𝗿𝗲𝗮𝘁𝗼𝗿 . Contact: kyanhnguyen.traveller@gmail.com',
-    image: 'https://www.kyanhnguyen.vn:8080/public/img/banner_ex_01.jpg',
+    openGraph: {
+      title: 'Kỳ Anh Nguyễn Home Page',
+      description: 'Kỳ Anh Nguyễn . 𝗧𝗿𝗮𝘃𝗲𝗹 𝗕𝗹𝗼𝗴𝗴𝗲𝗿 . 𝗖𝗼𝗻𝘁𝗲𝗻𝘁 𝗖𝗿𝗲𝗮𝘁𝗼𝗿 . Contact: kyanhnguyen.traveller@gmail.com',
+      images: [
+        {
+          url: 'https://kyanhnguyen.vn/img/banner/banner_ex_01.jpg',
+          alt: 'Kỳ Anh Nguyễn',
+        },
+      ],
+    },
   }
   return {
     props: { seoData, ...(await serverSideTranslations(locale || '')) },
