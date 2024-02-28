@@ -3,7 +3,7 @@ import formDataAxios from '@/utils/axios/form-data.axios'
 import type { AxiosResponseData } from '@/utils/axios'
 import { CREATE_BANNER_DTO, UPDATE_BANNER_DTO } from './banner.api.types'
 
-const categoryApi = {
+const bannerApi = {
   getList: () => {
     return commonAxios.get<AxiosResponseData>('/banners')
   },
@@ -31,4 +31,4 @@ const categoryApi = {
   },
 }
 
-export default categoryApi
+export default bannerApi

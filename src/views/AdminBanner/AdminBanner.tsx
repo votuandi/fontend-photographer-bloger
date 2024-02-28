@@ -16,6 +16,7 @@ import { setIsShowLoading } from '@/slices/showSlice'
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward'
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline'
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline'
 
 interface TabPanelProps {
   children?: React.ReactNode
@@ -67,6 +68,22 @@ export default function AdminBanner() {
     }
   }
 
+  let DeleteBanner = async (id: string) => {
+    try {
+      dispatch(setIsShowLoading(true))
+      let res = await bannerApi.deleteById(id)
+      if (res.data.status) {
+        GetBannerList()
+      } else {
+        alert('Xóa ảnh thất bại. Vui lòng thử lại!')
+        dispatch(setIsShowLoading(false))
+      }
+    } catch (error) {
+      dispatch(setIsShowLoading(false))
+      console.log(error)
+    }
+  }
+
   let UpdateBanner = async (id: string, action: 'up' | 'down') => {
     try {
       dispatch(setIsShowLoading(true))
@@ -82,6 +99,40 @@ export default function AdminBanner() {
     } catch (error) {
       dispatch(setIsShowLoading(false))
       console.log(error)
+    }
+  }
+
+  let AddNewBanner = async (image: File) => {
+    try {
+      let res = await bannerApi.createBanner({
+        params: {
+          device: tabIndex === 0 ? 'pc' : 'mobile',
+          image: image,
+        },
+      })
+      if (res.data.status) {
+        return true
+      } else return false
+    } catch (error) {
+      console.log(error)
+      return false
+    }
+  }
+
+  const handleAddFiles = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      dispatch(setIsShowLoading(true))
+      const selectedFiles = e.target.files
+      let amountSuccess = 0
+      for (let i = 0; i < selectedFiles.length; i++) {
+        let file: File = selectedFiles[i]
+        let res = await AddNewBanner(file)
+        if (res) amountSuccess += 1
+        else amountSuccess -= 1
+      }
+      dispatch(setIsShowLoading(false))
+      alert(`Đã thêm ${amountSuccess}/${selectedFiles.length} ảnh vào danh sách banner.`)
+      await GetBannerList()
     }
   }
 
@@ -212,7 +263,7 @@ export default function AdminBanner() {
                             sx={{
                               width: '100%',
                               borderRadius: '8px',
-                              backgroundImage: `url(${banner.path})`,
+                              backgroundImage: `url(${banner.path.includes('\\') ? banner.path.replaceAll('\\', '/') : banner.path})`,
                               aspectRatio: isLongerRatio ? 16 / 9 : 4 / 3,
                               backgroundRepeat: 'no-repeat',
                               backgroundPosition: 'center',
@@ -238,7 +289,7 @@ export default function AdminBanner() {
                             </Grid>
                             <Grid item xs={4}>
                               <Box sx={{ width: '100%', display: 'flex', flexDirection: 'row', justifyContent: 'cneter' }}>
-                                <Button color="primary" variant="contained" sx={{ borderRadius: '8px', mx: 'auto' }}>
+                                <Button color="primary" variant="contained" sx={{ borderRadius: '8px', mx: 'auto' }} onClick={() => DeleteBanner(banner.id)}>
                                   <DeleteOutlineIcon sx={{ color: '#fff' }} />
                                 </Button>
                               </Box>
@@ -263,6 +314,37 @@ export default function AdminBanner() {
                         </Box>
                       </Grid>
                     ))}
+                    <Grid item xs={12} sm={6} lg={4} padding="8px">
+                      <Box
+                        sx={{
+                          width: '100%',
+                          height: '100%',
+                          display: 'flex',
+                          flexDirection: 'column',
+                          justifyContent: 'center',
+                          alignItems: 'center',
+                          padding: '8px',
+                          backgroundColor: '#D0030020',
+                          borderRadius: '8px',
+                          // boxShadow: 1,
+                        }}
+                      >
+                        <input type="file" accept="image/*" multiple onChange={handleAddFiles} style={{ display: 'none' }} id="upload-image" />
+                        <label htmlFor="upload-image">
+                          <Button
+                            color="primary"
+                            variant="contained"
+                            sx={{
+                              borderRadius: '8px',
+                            }}
+                            startIcon={<AddCircleOutlineIcon />}
+                            component="span"
+                          >
+                            Thêm ảnh
+                          </Button>
+                        </label>
+                      </Box>
+                    </Grid>
                   </Grid>
                 </Box>
               </CustomTabPanel>
@@ -333,7 +415,7 @@ export default function AdminBanner() {
                             sx={{
                               width: '100%',
                               borderRadius: '8px',
-                              backgroundImage: `url(${banner.path})`,
+                              backgroundImage: `url(${banner.path.includes('\\') ? banner.path.replaceAll('\\', '/') : banner.path})`,
                               aspectRatio: isLongerRatio ? 9 / 16 : 3 / 4,
                               backgroundRepeat: 'no-repeat',
                               backgroundPosition: 'center',
@@ -350,6 +432,7 @@ export default function AdminBanner() {
                                   sx={{
                                     borderRadius: '8px',
                                   }}
+                                  onClick={() => UpdateBanner(banner.id, 'up')}
                                 >
                                   <ArrowBackIcon sx={{ color: index === 0 ? '#452424' : '#8E0000' }} />
                                 </Button>
@@ -357,7 +440,15 @@ export default function AdminBanner() {
                             </Grid>
                             <Grid item xs={4}>
                               <Box sx={{ width: '100%', display: 'flex', flexDirection: 'row', justifyContent: 'cneter' }}>
-                                <Button color="primary" variant="contained" sx={{ borderRadius: '8px', mx: 'auto' }}>
+                                <Button
+                                  color="primary"
+                                  variant="contained"
+                                  sx={{
+                                    borderRadius: '8px',
+                                    mx: 'auto',
+                                  }}
+                                  onClick={() => DeleteBanner(banner.id)}
+                                >
                                   <DeleteOutlineIcon sx={{ color: '#fff' }} />
                                 </Button>
                               </Box>
@@ -372,6 +463,7 @@ export default function AdminBanner() {
                                     borderRadius: '8px',
                                     mr: 'auto',
                                   }}
+                                  onClick={() => UpdateBanner(banner.id, 'down')}
                                 >
                                   <ArrowForwardIcon sx={{ color: index === bannerList.length - 1 ? '#452424' : '#8E0000' }} />
                                 </Button>
@@ -381,6 +473,37 @@ export default function AdminBanner() {
                         </Box>
                       </Grid>
                     ))}
+                    <Grid item xs={12} sm={6} md={4} lg={3} padding="8px">
+                      <Box
+                        sx={{
+                          width: '100%',
+                          height: '100%',
+                          display: 'flex',
+                          flexDirection: 'column',
+                          justifyContent: 'center',
+                          alignItems: 'center',
+                          padding: '8px',
+                          backgroundColor: '#D0030020',
+                          borderRadius: '8px',
+                          // boxShadow: 1,
+                        }}
+                      >
+                        <input type="file" accept="image/*" multiple onChange={handleAddFiles} style={{ display: 'none' }} id="upload-image" />
+                        <label htmlFor="upload-image">
+                          <Button
+                            color="primary"
+                            variant="contained"
+                            sx={{
+                              borderRadius: '8px',
+                            }}
+                            startIcon={<AddCircleOutlineIcon />}
+                            component="span"
+                          >
+                            Thêm ảnh
+                          </Button>
+                        </label>
+                      </Box>
+                    </Grid>
                   </Grid>
                 </Box>
               </CustomTabPanel>

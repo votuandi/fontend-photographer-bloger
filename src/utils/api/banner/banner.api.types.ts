@@ -21,6 +21,7 @@ export type BANNER_ITEM_TYPE = {
 export type CREATE_BANNER_DTO = {
   params: {
     device: 'pc' | 'mobile'
+    image: File
   }
 }
 
