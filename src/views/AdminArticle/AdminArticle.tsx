@@ -625,7 +625,7 @@ export default function AdminArticle() {
                   <Grid
                     item
                     xs={12}
-                    sm={9}
+                    sm={3}
                     sx={{
                       borderRadius: '8px',
 

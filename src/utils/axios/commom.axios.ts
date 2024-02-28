@@ -7,7 +7,7 @@ import { commonHelpers } from '../helpers'
 // })
 
 const commonAxios = axios.create({
-  baseURL: `https://${commonConfig.API_HOST}`,
+  baseURL: `${commonConfig.API_HOST}`,
 })
 
 commonAxios.interceptors.request.use(

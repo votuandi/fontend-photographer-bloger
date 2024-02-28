@@ -102,12 +102,23 @@ const defaultTheme = createTheme({
       tablet: 900 - 0.01,
       desktop: 1200,
     },
-    keys: ['xs', 'mobile', 'md', 'desktop', 'lg', 'xl'],
+    keys: ['xs', 'mobile', 'sm', 'md', 'desktop', 'lg', 'xl'],
   },
   palette: {
     primary: {
       main: '#8E0000',
+
       contrastText: muiTheme.palette.common.white,
+
+      //   dark: appColors.neutralDark,
+      //   main: appColors.neutral,
+      //   light: appColors.neutralLight,
+      // }
+    },
+    secondary: {
+      dark: muiTheme.palette.common.white,
+      main: muiTheme.palette.common.white,
+      light: muiTheme.palette.common.white,
     },
     // secondary: {
     //   dark: appColors.neutralDark,

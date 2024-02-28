@@ -17,10 +17,11 @@ type ISeoProps = {
 export const getServerSideProps = (async ({ locale }) => {
   let seoData: ISeoProps = {
     title: 'Kỳ Anh Nguyễn Home Page',
-    description: 'Kỳ Anh Nguyễn . 𝗧𝗿𝗮𝘃𝗲𝗹 𝗕𝗹𝗼𝗴𝗴𝗲𝗿 . 𝗖𝗼𝗻𝘁𝗲𝗻𝘁 𝗖𝗿𝗲𝗮𝘁𝗼𝗿 . Contact: kyanhnguyen.traveller@gmail.com',
+    description: 'Kỳ Anh Nguyễn . Travel Blogger . Content Creator . Contact: kyanhnguyen.traveller@gmail.com',
     openGraph: {
-      title: 'Kỳ Anh Nguyễn',
-      description: 'Kỳ Anh Nguyễn . 𝗧𝗿𝗮𝘃𝗲𝗹 𝗕𝗹𝗼𝗴𝗴𝗲𝗿 . 𝗖𝗼𝗻𝘁𝗲𝗻𝘁 𝗖𝗿𝗲𝗮𝘁𝗼𝗿 . Contact: kyanhnguyen.traveller@gmail.com',
+      url: 'https://www.kyanhnguyen.vn',
+      title: 'Kỳ Anh Nguyễn . Travel Blogger . Content Creator',
+      description: 'Kỳ Anh Nguyễn . Travel Blogger . Content Creator . Contact: kyanhnguyen.traveller@gmail.com',
       images: [
         {
           url: 'https://kyanhnguyen.vn/img/banner/banner_ex_01.jpg',
@@ -28,6 +29,7 @@ export const getServerSideProps = (async ({ locale }) => {
         },
         { url: 'https://kyanhnguyen.vn/img/banner/banner_ex_01.jpg' },
       ],
+      siteName: 'Kỳ Anh Nguyễn',
     },
   }
   return {
@@ -49,17 +51,7 @@ const Home: NextPageWithLayout<InferGetServerSidePropsType<typeof getServerSideP
         title={props.seoData.title}
         description={props.seoData.description}
         openGraph={{
-          url: 'https://www.kyanhnguyen.vn',
-          title: 'Kỳ Anh Nguyễn . 𝗧𝗿𝗮𝘃𝗲𝗹 𝗕𝗹𝗼𝗴𝗴𝗲𝗿 . 𝗖𝗼𝗻𝘁𝗲𝗻𝘁 𝗖𝗿𝗲𝗮𝘁𝗼𝗿',
-          description: 'Kỳ Anh Nguyễn . 𝗧𝗿𝗮𝘃𝗲𝗹 𝗕𝗹𝗼𝗴𝗴𝗲𝗿 . 𝗖𝗼𝗻𝘁𝗲𝗻𝘁 𝗖𝗿𝗲𝗮𝘁𝗼𝗿 . Contact: kyanhnguyen.traveller@gmail.com',
-          images: [
-            {
-              url: 'https://kyanhnguyen.vn/img/banner/banner_ex_01.jpg',
-              alt: 'Kỳ Anh Nguyễn',
-            },
-            { url: 'https://kyanhnguyen.vn/img/banner/banner_ex_01.jpg' },
-          ],
-          siteName: 'Kỳ Anh Nguyễn',
+          ...props.seoData.openGraph,
         }}
       />
       <ViewHome />

@@ -1,8 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react'
 import useStyles from './Admin.styles'
-import { Box, Button, useMediaQuery } from '@mui/material'
+import { Box, Button, CircularProgress, useMediaQuery } from '@mui/material'
 import AppAdminMenu from '@/components/AppAdminMenu'
 import theme from '@/assets/theme'
+import { useDispatch, useSelector } from 'react-redux'
+import { RootState } from '@/store'
 
 type MainProps = {
   children: React.ReactNode
@@ -11,6 +13,8 @@ type MainProps = {
 const Main = (props: MainProps) => {
   const { children } = props
   const isSmallScreen = useMediaQuery(theme.breakpoints.down(900))
+  const isShowLoading = useSelector((state: RootState) => state.show.isShowLoading)
+
   const { classes } = useStyles({
     params: {},
   })
@@ -25,6 +29,22 @@ const Main = (props: MainProps) => {
       }}
     >
       {!isSmallScreen && <AppAdminMenu />}
+      {isShowLoading && (
+        <Box
+          sx={{
+            position: 'fixed',
+            width: '100%',
+            height: '100vh',
+            zIndex: 100,
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            backgroundColor: '#7c320a2a',
+          }}
+        >
+          <CircularProgress color="primary" />
+        </Box>
+      )}
       <Box
         sx={{
           width: '100%',

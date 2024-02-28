@@ -5,7 +5,7 @@ import { useRouter } from 'next/router'
 import { useIsMounted } from 'usehooks-ts'
 import Slider from 'react-slick'
 import useStyles from './Admin.style'
-import { Box } from '@mui/material'
+import { Box, CircularProgress } from '@mui/material'
 import AppBanner from '@/components/AppBanner'
 import AppAdminMenu from '@/components/AppAdminMenu'
 import Head from 'next/head'
@@ -49,7 +49,7 @@ export default function Admin() {
             color: 'black',
           }}
         >
-          <AppAdminMenu />
+          {/* <AppAdminMenu /> */}
           <Box
             sx={{
               width: '100%',

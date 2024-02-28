@@ -18,6 +18,8 @@ import 'aos/dist/aos.css'
 import AOS from 'aos'
 import { CssBaseline, ThemeProvider } from '@mui/material'
 import theme from '@/assets/theme/theme.default'
+import { Provider } from 'react-redux'
+import { store } from '@/store'
 
 export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
   getLayout?: (
@@ -68,19 +70,21 @@ const MyApp: React.FunctionComponent<MyAppProps> = (props) => {
           siteName: commonConfig.DOCUMENT_TITLE,
         }}
       />
-      <QueryClientProvider client={queryClient}>
-        <CacheProvider value={emotionCache}>
-          <TssCacheProvider value={tssEmotionCache}>
-            <ThemeProvider theme={theme}>
-              <CssBaseline />
+      <Provider store={store}>
+        <QueryClientProvider client={queryClient}>
+          <CacheProvider value={emotionCache}>
+            <TssCacheProvider value={tssEmotionCache}>
+              <ThemeProvider theme={theme}>
+                <CssBaseline />
 
-              {getLayout(<Component {...pageProps} />, pageProps, {
-                translation,
-              })}
-            </ThemeProvider>
-          </TssCacheProvider>
-        </CacheProvider>
-      </QueryClientProvider>
+                {getLayout(<Component {...pageProps} />, pageProps, {
+                  translation,
+                })}
+              </ThemeProvider>
+            </TssCacheProvider>
+          </CacheProvider>
+        </QueryClientProvider>
+      </Provider>
     </>
   )
 }
