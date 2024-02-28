@@ -3,7 +3,7 @@ import useStyles from './Admin.styles'
 import { Box, Button, CircularProgress, useMediaQuery } from '@mui/material'
 import AppAdminMenu from '@/components/AppAdminMenu'
 import theme from '@/assets/theme'
-import { useDispatch, useSelector } from 'react-redux'
+import { useSelector } from 'react-redux'
 import { RootState } from '@/store'
 
 type MainProps = {
